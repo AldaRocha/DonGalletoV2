@@ -20,7 +20,7 @@ Versiones nesesarias:
 --  --------------------------------------------------  --
 
 ** SI NO TE SALE LA VERSION Y TE SALE ERROR, EJECUTA EL SIGUIENTE COMANDO Y VUELVE A CONSULTAR LA VERSION HASTA QUE TE SALGA LA MISMA CONFIGURACION **
-** npm install -g @angular/cli@7.3.0 **
+** npm install -g @angular/cli@16.2.10 **
 
 Una vez que tengas las versiones, para levantar el sitio despues de pull es necesario tener la carpeta de node_modules en PortalGalleto
 
