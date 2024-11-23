@@ -51,26 +51,6 @@ namespace Servicios.Fachada.Controllers
             }
         }
 
-        [HttpPost("logout")]
-        public ActionResult<Response> Logout([FromBody] RequestInterface request)
-        {
-            try
-            {
-                ResponseInterface responseInterface = new Auth(this.DbContext, request).Logout(this.response);
-                if (responseInterface.error)
-                {
-                    this.HttpContext.Response.StatusCode = responseInterface.status;
-                    return this.response.Error(responseInterface.message);
-                }
-                return this.response.Ok("", responseInterface.authData);
-            }
-            catch (Exception ex)
-            {
-                this.HttpContext.Response.StatusCode = response.BadRequest;
-                return response.Error(ex.Message);
-            }
-        }
-
         #endregion
     }
 }

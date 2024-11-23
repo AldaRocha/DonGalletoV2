@@ -20,6 +20,9 @@
   <ItemGroup>
     <Folder Include="Controllers\Auth\" />
     <Folder Include="Controllers\v1\Sistema\" />
+    <Folder Include="DAO\" />
+    <Folder Include="CQRS\" />
+    <Folder Include="AppService\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Servicios.Datos\Servicios.Datos.csproj">

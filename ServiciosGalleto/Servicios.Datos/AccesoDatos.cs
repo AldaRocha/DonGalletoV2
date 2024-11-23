@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Servicios.Entidad.Tables;
 
 namespace Servicios.Datos
 {
@@ -8,5 +9,7 @@ namespace Servicios.Datos
         {
             this.ChangeTracker.LazyLoadingEnabled = false;
         }
+
+        public DbSet<Usuario> Usuario { get; set; }
     }
 }

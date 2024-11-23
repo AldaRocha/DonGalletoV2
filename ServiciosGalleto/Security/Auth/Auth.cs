@@ -1,5 +1,7 @@
 ﻿using Security.Partial;
 using Servicios.Datos;
+using Servicios.Entidad.Tables;
+using System.Linq;
 
 namespace Security.Auth
 {
@@ -18,12 +20,23 @@ namespace Security.Auth
 
         public ResponseInterface Connect(Response response, bool JWE = false)
         {
-            return new ResponseInterface("", response.OK, false);
-        }
+            UsuarioLogin data = request.getData<UsuarioLogin>();
+            Usuario usuario = this.DbContext.Usuario.Where(p => p.Pin.Equals(data.Pin)).FirstOrDefault();
 
-        public ResponseInterface Logout(Response response)
-        {
-            return new ResponseInterface("", response.OK, false);
+            if (usuario == null)
+            {
+                return new ResponseInterface("Verifica que el pin sea correcto", response.PartialContent, true);
+            }
+
+            AuthData auth = new AuthData(usuario);
+
+            Bearer bearer = new Bearer
+            {
+                UsuarioId = usuario.UsuarioId
+            };
+            auth.Bearer = this.firewall.Encode(bearer);
+
+            return new ResponseInterface("", response.OK, false, auth);
         }
     }
 }

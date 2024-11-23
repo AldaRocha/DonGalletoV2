@@ -1,0 +1,65 @@
+<div class="fondo">
+  <div>
+    <form [formGroup]="FormLogin">
+      <input class="input" type="text" placeholder="Pin" id="Pin" maxlength="4" formControlName="Pin" required/>
+    </form>
+    <div class="row mt-2">
+      <div class="d-flex align-items-center justify-content-between">
+        <button class="btn" (click)="ModificarPin(1, '1')">
+          1
+        </button>
+        <button class="btn" (click)="ModificarPin(1, '2')">
+          2
+        </button>
+        <button class="btn" (click)="ModificarPin(1, '3')">
+          3
+        </button>
+      </div>
+      <div class="d-flex align-items-center justify-content-between mt-2">
+        <button class="btn" (click)="ModificarPin(1, '4')">
+          4
+        </button>
+        <button class="btn" (click)="ModificarPin(1, '5')">
+          5
+        </button>
+        <button class="btn" (click)="ModificarPin(1, '6')">
+          6
+        </button>
+      </div>
+      <div class="d-flex align-items-center justify-content-between mt-2">
+        <button class="btn" (click)="ModificarPin(1, '7')">
+          7
+        </button>
+        <button class="btn" (click)="ModificarPin(1, '8')">
+          8
+        </button>
+        <button class="btn" (click)="ModificarPin(1, '9')">
+          9
+        </button>
+      </div>
+      <div class="d-flex align-items-center justify-content-between mt-2">
+        <button class="btn" disabled style="border: 0;">
+
+        </button>
+        <button class="btn" (click)="ModificarPin(1, '0')">
+          0
+        </button>
+        <button class="btn" (click)="ModificarPin(0, '')">
+          <i class="fa-solid fa-delete-left"></i>
+        </button>
+      </div>
+    </div>
+    <div class="mt-2">
+      <button class="btn" style="width: 100%; height: 70px;" (click)="Ingresar()">
+        Ingresar
+      </button>
+    </div>
+    <div class="d-flex alig-items-center justify-content-center mt-2">
+      <div class="spinner-grow text-danger" style="width: 3rem; height: 3rem;" role="status" [hidden]="!Loading">
+        <span class="visually-hidden">
+          Loading...
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

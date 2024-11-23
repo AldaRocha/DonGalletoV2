@@ -1,0 +1,26 @@
+.fondo{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url(../../../assets/img/fondoGalletas.png);
+}
+
+form{
+    width: 500px;
+}
+
+.input{
+    width: 100%;
+    height: 70px;
+    text-align: center;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
+.btn{
+    background-color: white;
+    border-radius: 0rem;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    width: 30%;
+    height: 100px;
+}
