@@ -34,6 +34,7 @@
 		,Cantidad			DECIMAL(18, 2) NOT NULL
 		,Precio				DECIMAL(18, 2) NOT NULL
 		,Porcentaje			INT NOT NULL
+		,Proveedor			VARCHAR(100) NOT NULL
 		,MedidaId			INT NOT NULL
 
 		,FOREIGN KEY (MedidaId) REFERENCES [DonGalletoUX].[dbo].[medida](MedidaId)

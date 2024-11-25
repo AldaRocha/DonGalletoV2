@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "PortalGalleto:build:production"
+              "buildTarget": "PortalGalleto:build:production"
             },
             "development": {
-              "browserTarget": "PortalGalleto:build:development"
+              "buildTarget": "PortalGalleto:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -78,7 +78,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "PortalGalleto:build"
+            "buildTarget": "PortalGalleto:build"
           }
         },
         "test": {
