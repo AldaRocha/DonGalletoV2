@@ -1,64 +1,75 @@
-<div class="pantalla-completa">
+<div class="pantalla-completa" [hidden]="consulta">
     <div class="ancho">
         <h1 class="text-center">
-            Almacen
+            Almac&eacute;n
         </h1>
         <hr/>
         <div class="mt-2">
-            <button class="btn btn-primary">
-                AGREGAR INGREDIENTES AL ALMACEN
+            <button class="btn btn-primary" (click)="Formulario(1, null)">
+                AGREGAR INGREDIENTES AL ALMAC&Eacute;N
             </button>
             <hr/>
-            <table class="table table-striped table-hover" id="tablaAlmacen">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped table-hover" id="tablaAlmacen">
                 <thead>
                     <tr>
-                        <th>
+                        <th class="text-center">
                             Nombre
                         </th>
-                        <th>
+                        <th class="text-center">
                             Fecha Compra
                         </th>
-                        <th>
+                        <th class="text-center">
                             Fecha Vencimiento
                         </th>
-                        <th>
+                        <th class="text-center">
                             Existentes
                         </th>
-                        <th>
+                        <th class="text-center">
                             Precio Compra
                         </th>
-                        <th>
+                        <th class="text-center">
                             Proveedor
+                        </th>
+                        <th class="text-center">
+                            Acci&oacute;n
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Leche</td>
-                        <td>24/11/2024</td>
-                        <td>24/12/2024</td>
-                        <td>10</td>
-                        <td>15</td>
-                        <td>Juan</td>
-                    </tr>
-                    <tr>
-                        <td>Huevos</td>
-                        <td>24/11/2024</td>
-                        <td>24/12/2024</td>
-                        <td>10</td>
-                        <td>15</td>
-                        <td>Juan</td>
-                    </tr>
-                    <tr>
-                        <td>Harina</td>
-                        <td>24/11/2024</td>
-                        <td>24/12/2024</td>
-                        <td>10</td>
-                        <td>15</td>
-                        <td>Juan</td>
+                    <tr *ngFor="let c of Almacen; let i = index">
+                        <td class="text-center">
+                            {{ c.nombre }}
+                        </td>
+                        <td class="text-center">
+                            {{ c.fechaCompra }}
+                        </td>
+                        <td class="text-center">
+                            {{ c.fechaVencimiento }}
+                        </td>
+                        <td class="text-center">
+                            {{ c.cantidad }}
+                        </td>
+                        <td class="text-center">
+                            &dollar;{{ c.precio }}
+                        </td>
+                        <td class="text-center">
+                            {{ c.proveedor }}
+                        </td>
+                        <td class="text-center">
+                            <i class="fa-solid fa-pen" (click)="Formulario(2, c)"></i>
+                            &nbsp;
+                            <i class="fa-solid fa-trash" (click)="Eliminar(c.id)"></i>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+            <div class="d-flex align-items-center justify-content-center mt-2">
+                <div class="spinner-grow text-danger" style="width: 3rem; height: 3rem;" role="status" [hidden]="!Loading">
+                    <span class="visually-hidden">
+                        Loading...
+                    </span>
+                </div>
+            </div>
         </div>
         <hr/>
         <div class="d-flex align-items-end justify-content-end mt-2">
@@ -67,4 +78,8 @@
             </button>
         </div>
     </div>
+</div>
+
+<div #containerFormulario>
+
 </div>
