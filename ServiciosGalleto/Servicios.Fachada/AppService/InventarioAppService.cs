@@ -1,104 +1,50 @@
-﻿using System;
+﻿using Servicios.Entidad.ViewModel;
+using System;
 using System.Collections.Generic;
-using Servicios.Datos;
-using Servicios.Entidad.Model;
-using Servicios.Entidad.ViewModel;
-using Servicios.Fachada.CQRS;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Servicios.Fachada.AppService
 {
     public class InventarioAppService
     {
-        public List<InventarioViewModel> GetInventario(AccesoDatos DbContext, int estatus)
+        public async Task<List<InventarioViewModel>> GetInventarioExterno()
         {
+            List<InventarioViewModel> lista = new List<InventarioViewModel>();
             try
             {
-                InventarioCQRS icqrs = new InventarioCQRS();
-
-                List<Inventario> lista = icqrs.GetInventario(DbContext, estatus);
-                List<InventarioViewModel> dataList = new List<InventarioViewModel>();
-
-                foreach (Inventario i in lista)
+                using (var httpClient = new HttpClient())
                 {
-                    InventarioViewModel model = new InventarioViewModel();
+                    HttpResponseMessage response = await httpClient.GetAsync("https://6720467ee7a5792f0530f68c.mockapi.io/api/v1/InventarioAppService");
+                    response.EnsureSuccessStatusCode();
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var listarespuesta = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(jsonResponse);
 
-                    model.id = i.InventarioId;
-                    model.nombre = i.Nombre;
-                    model.fechaCompra = i.FechaCompra.ToString();
-                    model.fechaVencimiento = i.FechaVencimiento.ToString();
-                    model.activo = i.Activo;
-                    model.cantidad = i.Cantidad;
-                    model.precio = i.Precio;
-                    model.porcentaje = i.Porcentaje;
-                    model.proveedor = i.Proveedor;
-                    model.idMedida = i.MedidaId;
-                    model.medida = i.Medida;
+                    foreach (var inventario in listarespuesta)
+                    {
+                        InventarioViewModel model = new InventarioViewModel();
 
-                    dataList.Add(model);
+                        model.id = int.Parse(inventario["id"].ToString());
+                        model.nombre = inventario["nombre"].ToString();
+                        model.fechaCompra = inventario["fechaCompra"].ToString();
+                        model.fechaVencimiento = inventario["fechaVencimiento"].ToString();
+                        model.activo = bool.Parse(inventario["activo"].ToString().ToLower()) ? 1 : 0;
+                        model.cantidad = decimal.Parse(inventario["cantidad"].ToString());
+                        model.precio = decimal.Parse(inventario["precio"].ToString());
+                        model.porcentaje = int.Parse(inventario["porcentaje"].ToString());
+                        model.proveedor = inventario["proveedor"].ToString();
+                        model.idMedida = int.Parse(inventario["idMedida"].ToString());
+
+                        lista.Add(model);
+                    }
                 }
-
-                return dataList;
             }
             catch (Exception ex)
             {
-                return null;
+                lista = null;
             }
-        }
-
-        public string AgregarInventario(AccesoDatos DbContext, List<InventarioViewModel> dataList)
-        {
-            try
-            {
-                InventarioCQRS icqrs = new InventarioCQRS();
-                List<Inventario> inventarios = new List<Inventario>();
-                foreach (InventarioViewModel i in dataList)
-                {
-                    Inventario inventario = new Inventario();
-
-                    inventario.Nombre = i.nombre;
-                    inventario.FechaCompra = DateTime.Parse(i.fechaCompra);
-                    inventario.FechaVencimiento = DateTime.Parse(i.fechaVencimiento);
-                    inventario.Activo = (byte)i.activo;
-                    inventario.Cantidad = (decimal)i.cantidad;
-                    inventario.Precio = (decimal)i.precio;
-                    inventario.Porcentaje = (int)i.porcentaje;
-                    inventario.Proveedor = i.proveedor;
-                    inventario.MedidaId = i.idMedida;
-
-                    inventarios.Add(inventario);
-                }
-
-                return icqrs.AgregarInventario(DbContext, inventarios);
-            }
-            catch (Exception ex)
-            {
-                return "Error al mapear los productos";
-            }
-        }
-
-        public string ActualizarInventario(AccesoDatos DbContext, int id, InventarioViewModel data)
-        {
-            try
-            {
-                InventarioCQRS icqrs = new InventarioCQRS();
-                Inventario inventario = new Inventario();
-
-                inventario.Nombre = data.nombre;
-                inventario.FechaCompra = DateTime.Parse(data.fechaCompra);
-                inventario.FechaVencimiento = DateTime.Parse(data.fechaVencimiento);
-                inventario.Activo = (byte)data.activo;
-                inventario.Cantidad = (decimal)data.cantidad;
-                inventario.Precio = (decimal)data.precio;
-                inventario.Porcentaje = (int)data.porcentaje;
-                inventario.Proveedor = data.proveedor;
-                inventario.MedidaId = data.idMedida;
-
-                return icqrs.ActualizarInventario(DbContext, id, inventario);
-            }
-            catch (Exception ex)
-            {
-                return "Error al mapear los productos";
-            }
+            return lista;
         }
     }
 }

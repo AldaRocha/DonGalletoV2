@@ -1,0 +1,210 @@
+<div class="pantalla-completa" [ngStyle]="{'height': Receta ? '190vh' : '100vh'}">
+    <div class="ancho">
+        <h1 class="text-center">
+            {{ accion }} Galleta
+        </h1>
+        <hr/>
+        <div class="mt-2">
+            <div class="row">
+                <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center">
+                    <form class="row" [formGroup]="FormGalleta">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12 pe-1">
+                            <div>
+                                <label for="nombre" class="col-lg-12 col-md-12 col-sm-12 col-12 col-form-label">
+                                    Nombre:
+                                </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <input id="nombre" type="text" class="form-control" placeholder="Nombre" formControlName="nombre" [ngClass]="{ 'is-invalid': Enviado && f['nombre'].errors }"/>
+                                    <div *ngIf="Enviado && f['nombre'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['nombre'].errors['required']">
+                                            El nombre es obligatorio
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="precioVenta" class="col-lg-12 col-md-12 col-sm-12 col-12 col-form-label">
+                                    Precio venta:
+                                </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <input id="precioVenta" type="number" class="form-control" placeholder="Precio venta" formControlName="precioVenta" [ngClass]="{ 'is-invalid': Enviado && f['precioVenta'].errors }"/>
+                                    <div *ngIf="Enviado && f['precioVenta'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['precioVenta'].errors['required']">
+                                            El precio de venta es obligatorio
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="pesoGalleta" class="col-lg-12 col-md-12 col-sm-12 col-12 col-form-label">
+                                    Peso aproximado de la galleta:
+                                </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <input id="pesoGalleta" type="number" class="form-control" placeholder="Peso galleta" formControlName="pesoGalleta" [ngClass]="{ 'is-invalid': Enviado && f['pesoGalleta'].errors }"/>
+                                    <div *ngIf="Enviado && f['pesoGalleta'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['pesoGalleta'].errors['required']">
+                                            El peso de la galleta es obligatorio
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12 ps-1">
+                            <div>
+                                <label for="cantidad" class="col-lg-12 col-md-12 col-sm-12 col-12 col-form-label">
+                                    Cantidad:
+                                </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <input id="cantidad" type="number" class="form-control" placeholder="Cantidad" formControlName="cantidad" [ngClass]="{ 'is-invalid': Enviado && f['cantidad'].errors }"/>
+                                    <div *ngIf="Enviado && f['cantidad'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['cantidad'].errors['required']">
+                                            La cantidad es obligatoria
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="precioProduccion" class="col-lg-12 col-md-12 col-sm-12 col-12 col-form-label">
+                                    Precio Produccion:
+                                </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <input id="precioProduccion" type="number" class="form-control" placeholder="Precio produccion" formControlName="precioProduccion" [ngClass]="{ 'is-invalid': Enviado && f['precioProduccion'].errors }"/>
+                                    <div *ngIf="Enviado && f['precioProduccion'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['precioProduccion'].errors['required']">
+                                            El precio de produccion es obligatorio
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="idMedida" class="col-lg-12 col-md-12 col-sm-12 col-12 col-form-label">
+                                    Medida:
+                                </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <select id="idMedida" class="form-control" formControlName="idMedida" [ngClass]="{ 'is-invalid': Enviado && f['idMedida'].errors }">
+                                        <option *ngFor="let c of Medidas; let i = index" [value]="c.id">
+                                            {{ c.nombre }}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="Enviado && f['idMedida'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['idMedida'].errors['required']">
+                                            La medida es obligatorio
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div>
+                                <label for="imagen" class="col-lg-12 col-md-12 col-sm-12 col-12 col-form-label">
+                                    Imagen:
+                                </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <input id="imagen" type="file" class="form-control" formControlName="imagen" (change)="onFileSelected($event)" accept="image/jpeg, image/jpg, image/png" [ngClass]="{ 'is-invalid': Enviado && f['imagen'].errors }"/>
+                                    <div *ngIf="Enviado && f['imagen'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['imagen'].errors['required']">
+                                            La imagen es obligatoria
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <h3 class="text-center mt-5" *ngIf="Receta">
+                    Receta
+                </h3>
+                <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 justify-content-center mt-2" *ngIf="Receta">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12 pe-1">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        Nombre
+                                    </th>
+                                    <th class="text-center">
+                                        Cantidad
+                                    </th>
+                                    <th class="text-center">
+                                        Medida
+                                    </th>
+                                    <th class="text-center">
+                                        Agregar
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let c of Almacen; let j = index">
+                                    <td class="text-center">
+                                        {{ c.nombre }}
+                                    </td>
+                                    <td class="text-center">
+                                        <input [id]="'Inventario' + c.id" type="text" class="form-control"/>
+                                    </td>
+                                    <td class="text-center">
+                                        {{ c.medida?.nombre }}
+                                    </td>
+                                    <td class="text-center">
+                                        <i class="fa-solid fa-plus" (click)="AgregarIngrediente(c.id)"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12 ps-1">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        Nombre
+                                    </th>
+                                    <th class="text-center">
+                                        Cantidad
+                                    </th>
+                                    <th class="text-center">
+                                        Medida
+                                    </th>
+                                    <th class="text-center">
+                                        Quitar
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let c of RecetaList; let k = index">
+                                    <td class="text-center">
+                                        {{ c.inventario?.nombre }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ c.cantidad }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ c.medida?.nombre }}
+                                    </td>
+                                    <td class="text-center">
+                                        <i class="fa-solid fa-trash" (click)="QuitarReceta(k)"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center mt-2">
+                <div class="spinner-grow text-danger" style="width: 3rem; height: 3rem;" role="status" [hidden]="!Loading">
+                    <span class="visually-hidden">
+                        Loading...
+                    </span>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="d-flex align-items-end justify-content-end mt-2">
+            <button class="btn btn-danger" (click)="Salir()">
+                REGRESAR
+            </button>
+            <button class="btn btn-success ms-2" (click)="Guardar()">
+                GUARDAR
+            </button>
+        </div>
+    </div>
+</div>

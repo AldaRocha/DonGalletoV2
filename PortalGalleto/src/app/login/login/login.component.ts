@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UsuarioLogin } from 'src/app/model/UsuarioLogin';
 import { RestService } from 'src/app/services/rest.service';
 import { StorageService } from 'src/app/services/storage.service';
+import Swall from "sweetalert2";
 
 @Component({
   selector: 'login-root',
@@ -51,7 +52,13 @@ export class LoginComponent implements OnInit {
       this.storage.setItem('dongalleto-oauth', response);
       this._router.navigate(['/menu/inicio']);
     } else{
-      alert("Pin incorrecto");
+      Swall.fire({
+        icon: "warning",
+        title: "Error al ingresar",
+        text: "Pin incorrecto",
+        showConfirmButton: false,
+        timer: 3000
+    });
     }
     this.Loading = false;
   }

@@ -14,6 +14,7 @@ namespace Servicios.Entidad.Model
         public decimal PrecioVenta { get; set; }
         public decimal PrecioProduccion { get; set; }
         public string Imagen { get; set; }
+        public decimal PesoGalleta { get; set; }
         public int MedidaId { get; set; }
         public virtual Medida Medida { get; set; }
     }

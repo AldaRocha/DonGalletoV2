@@ -1,4 +1,5 @@
 import { MedidaViewModel } from "./MedidaViewModel";
+import { RecetaViewModel } from "./RecetaViewModel";
 
 export class GalletaViewModel{
     id: number;
@@ -7,8 +8,11 @@ export class GalletaViewModel{
     precioVenta: number;
     precioProduccion: number;
     imagen: string | null;
+    pesoGalleta: number;
     idMedida: number;
     medida: MedidaViewModel | null;
+
+    recetamodel: RecetaViewModel[];
 
     constructor(val: GalletaViewModel){
         this.id = val.id ? val.id : 0;
@@ -17,7 +21,10 @@ export class GalletaViewModel{
         this.precioVenta = val.precioVenta ? val.precioVenta : 0;
         this.precioProduccion = val.precioProduccion ? val.precioProduccion : 0;
         this.imagen = val.imagen ? val.imagen : null;
+        this.pesoGalleta = val.pesoGalleta ? val.pesoGalleta : 0;
         this.idMedida = val.idMedida ? val.idMedida : 0;
         this.medida = val.medida ? val.medida : null;
+
+        this.recetamodel = [];
     }
 }

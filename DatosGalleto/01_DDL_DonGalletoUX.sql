@@ -48,6 +48,7 @@
 		,PrecioVenta		DECIMAL(18, 2) NOT NULL
 		,PrecioProduccion	DECIMAL(18, 2) NOT NULL
 		,Imagen				VARCHAR(MAX) NOT NULL
+		,PesoGalleta		DECIMAL(18, 2)
 		,MedidaId			INT NOT NULL
 
 		,FOREIGN KEY (MedidaId) REFERENCES [DonGalletoUX].[dbo].[medida](MedidaId)

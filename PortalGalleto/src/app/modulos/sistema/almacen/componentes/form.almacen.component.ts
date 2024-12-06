@@ -164,7 +164,7 @@ export class FormAlmacenComponent implements OnInit{
             }
 
             const data: InventarioViewModel = new InventarioViewModel(this.FormGuardar.value);
-            const response: any = await this._rest.Put("/almacen/" + data.id, data);
+            const response: any = await this._rest.Put("/almacen", data);
 
             if (!response.error){
                 if (response.message == null){

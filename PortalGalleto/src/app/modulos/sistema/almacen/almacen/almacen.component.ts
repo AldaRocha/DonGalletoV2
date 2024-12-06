@@ -72,7 +72,7 @@ export class AlmacenComponent implements OnInit{
             this.consulta = false;
             ref.destroy();
             if (cambio){
-                this.router.navigate(["menu/sistema/almacen/almacen"]);
+                window.location.reload();
             }
         });
     }

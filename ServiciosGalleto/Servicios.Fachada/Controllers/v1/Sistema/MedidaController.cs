@@ -5,6 +5,8 @@ using Servicios.Entidad.ViewModel;
 using Servicios.Fachada.AppService;
 using System.Collections.Generic;
 using System;
+using Servicios.Fachada.DAO;
+using Servicios.Entidad.Model;
 
 namespace Servicios.Fachada.Controllers.v1.Sistema
 {
@@ -25,11 +27,22 @@ namespace Servicios.Fachada.Controllers.v1.Sistema
         {
             try
             {
-                MedidaAppService mas = new MedidaAppService();
+                MedidaDAO mdao = new MedidaDAO();
 
-                List<MedidaViewModel> data = mas.GetMedida(DbContext);
+                List<Medida> lista = mdao.GetAllMedida(DbContext);
+                List<MedidaViewModel> dataList = new List<MedidaViewModel>();
 
-                return response.Ok("", data);
+                foreach (Medida i in lista)
+                {
+                    MedidaViewModel model = new MedidaViewModel();
+
+                    model.id = i.MedidaId;
+                    model.nombre = i.Nombre;
+
+                    dataList.Add(model);
+                }
+
+                return response.Ok("", dataList);
             }
             catch (Exception ex)
             {

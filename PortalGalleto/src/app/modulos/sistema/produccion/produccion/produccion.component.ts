@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { Router } from "@angular/router";
 
 @Component({
     selector: "produccion-app",
@@ -6,7 +7,11 @@ import { Component } from "@angular/core";
     styleUrls: ["./produccion.component.scss"]
 })
 export class ProduccionComponent{
-    constructor(){
+    constructor(public router: Router){
         
+    }
+
+    Regresar(){
+        this.router.navigate(["menu/inicio"]);
     }
 }

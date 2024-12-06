@@ -17,7 +17,7 @@ namespace Servicios.Fachada.DAO
 
         public List<Inventario> GetAllInventarioEstatus(AccesoDatos DbContext, int estatus)
         {
-            return DbContext.Inventario.Include(p => p.Medida).Where(p => p.Activo == estatus).ToList();
+            return DbContext.Inventario.Include(p => p.Medida).Where(p => p.Activo == estatus).GroupBy(p => p.Nombre).Select(p => p.FirstOrDefault()).ToList();
         }
 
         public string AgregarInventario(AccesoDatos DbContext, List<Inventario> dataList)
@@ -47,26 +47,17 @@ namespace Servicios.Fachada.DAO
             return mensaje;
         }
 
-        public string ActualizarInventario(AccesoDatos DbContext, int id, Inventario data)
+        public string ActualizarInventario(AccesoDatos DbContext, Inventario data)
         {
             string mensaje = null;
             using (IDbContextTransaction transaction = DbContext.Database.BeginTransaction())
             {
                 try
                 {
-                    Inventario inventario = DbContext.Inventario.Where(p => p.InventarioId == id).FirstOrDefault();
-                    if (inventario == null)
-                    {
-                        mensaje = "Producto no encontrado.";
-                    }
-                    else
-                    {
-                        DbContext.Inventario.Update(data);
-                        DbContext.SaveChanges();
+                    DbContext.Inventario.Update(data);
+                    DbContext.SaveChanges();
 
-                        transaction.Commit();
-                    }
-
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {

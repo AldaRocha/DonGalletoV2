@@ -116,7 +116,7 @@ namespace Servicios.Fachada.CQRS
             return mensaje;
         }
 
-        public string ActualizarInventario(AccesoDatos DbContext, int id, Inventario data)
+        public string ActualizarInventario(AccesoDatos DbContext, Inventario data)
         {
             string mensaje = null;
             try
@@ -174,7 +174,7 @@ namespace Servicios.Fachada.CQRS
                 {
                     InventarioDAO idao = new InventarioDAO();
 
-                    mensaje = idao.ActualizarInventario(DbContext, id, data);
+                    mensaje = idao.ActualizarInventario(DbContext, data);
                 }
                 else
                 {

@@ -11,12 +11,12 @@ namespace Servicios.Entidad.ViewModel
         public string? nombre { get; set; }
         public string? fechaCompra { get; set; }
         public string? fechaVencimiento { get; set; }
-        public byte? activo { get; set; }
+        public int? activo { get; set; }
         public decimal? cantidad { get; set; }
         public decimal? precio { get; set; }
         public int? porcentaje { get; set; }
         public string? proveedor { get; set; }
         public int idMedida { get; set; }
-        public Medida medida { get; set; }
+        public MedidaViewModel? medida { get; set; }
     }
 }
