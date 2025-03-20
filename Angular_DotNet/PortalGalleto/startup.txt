@@ -34,3 +34,6 @@ Una vez terminado, dentro de PortalGalleto ejecutamos:
 <ng serve>
 
 Esto levantara el sitio y en el navegador entramos a http://localhost:4200/#/login/login
+
+Comentario de Andy:
+Hallo! Ich bin Andrea, ich bin vierundzwanzig Jahre alt. Ich spreche Spanisch, Englisch, Französisch und ein bisschen Deutsch. Freut mich!
