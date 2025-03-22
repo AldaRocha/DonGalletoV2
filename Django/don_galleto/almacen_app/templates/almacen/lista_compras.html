@@ -1,0 +1,24 @@
+{% extends 'base_almacen.html' %}
+
+{% block almacen_content %}
+<h1>Lista de Compras</h1>
+<table>
+    <tr>
+        <th>Proveedor</th>
+        <th>Fecha de Compra</th>
+        <th>Total</th>
+        <th>Acciones</th>
+    </tr>
+    {% for compra in compras %}
+    <tr>
+        <td>{{ compra.proveedor.nombre }}</td>
+        <td>{{ compra.fecha_compra }}</td>
+        <td>{{ compra.total }}</td>
+        <td>
+            <a href="{% url 'editar_compra' compra.id %}">Editar</a> |
+            <a href="{% url 'registrar_merma' %}">Registrar Merma</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base_almacen.html' %}
+
+{% block almacen_content %}
+<h1>Crear Insumo</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Crear Insumo</button>
+</form>
+{% endblock %}

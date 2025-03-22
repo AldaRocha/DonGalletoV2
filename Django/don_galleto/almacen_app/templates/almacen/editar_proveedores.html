@@ -1,0 +1,10 @@
+{% extends 'base_almacen.html' %}
+
+{% block almacen_content %}
+<h1>Editar Proveedor</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar Cambios</button>
+</form>
+{% endblock %}

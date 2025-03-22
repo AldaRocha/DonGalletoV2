@@ -1,0 +1,23 @@
+{% extends 'base_almacen.html' %}
+
+{% block almacen_content %}
+<h1>Lista de Mermas</h1>
+<table>
+    <tr>
+        <th>Tipo</th>
+        <th>Cantidad</th>
+        <th>Fecha de Registro</th>
+        <th>Insumo</th>
+        <th>Galleta</th>
+    </tr>
+    {% for merma in mermas %}
+    <tr>
+        <td>{{ merma.tipo }}</td>
+        <td>{{ merma.cantidad }}</td>
+        <td>{{ merma.fecha_registro }}</td>
+        <td>{{ merma.insumo.nombre if merma.insumo else '' }}</td>
+        <td>{{ merma.galleta.nombre if merma.galleta else '' }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

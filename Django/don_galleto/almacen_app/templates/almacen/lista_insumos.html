@@ -1,0 +1,24 @@
+{% extends 'base_almacen.html' %}
+
+{% block almacen_content %}
+<h1>Lista de Insumos</h1>
+<table>
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Unidad de Medida</th>
+        <th>Acciones</th>
+    </tr>
+    {% for insumo in insumos %}
+    <tr>
+        <td>{{ insumo.nombre }}</td>
+        <td>{{ insumo.descripcion }}</td>
+        <td>{{ insumo.unidad_medida }}</td>
+        <td>
+            <a href="{% url 'editar_insumo' insumo.id %}">Editar</a> |
+            <a href="{% url 'registrar_merma' %}">Registrar Merma</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
