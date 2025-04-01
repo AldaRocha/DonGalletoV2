@@ -6,5 +6,5 @@ class Proveedor(models.Model):
     email = models.TextField(max_length=100)
     telefono = models.TextField(max_length=15)
     direccion = models.TextField(max_length=200)
-    def _str_(self):
-        return f"{self.id}-{self.nombre}-{self.email}-{self.telefono}-{self.direccion}"
+    def __str__(self):
+        return f"{self.nombre} / {self.email}"
