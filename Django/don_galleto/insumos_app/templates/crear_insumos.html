@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="pantalla-completa">
+    <div class="menu">
+        <h1 class="text-center">
+            Agregar Insumo
+        </h1>
+        </hr>
+        <div class="row mt-4">
+            <form class="col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="d-flex">
+                    <div class="d-flex col-lg-6 col-md-6 col-sm-12 col-12 px-2 align-items-center justify-content-end">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div>
+                                {{ form.nombre.label_tag }}
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    {{ form.nombre }}
+                                </div>
+                            </div>
+                            <div>
+                                {{ form.medida.label_tag }}
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    {{ form.medida }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex col-lg-6 col-md-6 col-sm-12 col-12 px-2 align-items-center justify-content-start">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div>
+                                {{ form.descripcion.label_tag }}
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    {{ form.descripcion }}
+                                </div>
+                            </div>
+                            <div>
+                                {{ form.cantidad_minima.label_tag }}
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    {{ form.cantidad_minima }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-end justify-content-end mt-3 px-2">
+                    <a class="btn btn-danger me-2" href="{% url "lista_insumos" %}">
+                        Regresar
+                    </a>
+                    <button class="btn btn-success ms-2" type="submit">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>
+                            {{ error|escape }}
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>
+                        {{ error|escape }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock content %}

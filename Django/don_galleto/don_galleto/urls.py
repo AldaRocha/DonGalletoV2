@@ -27,6 +27,9 @@ urlpatterns = [
     path('home', login_required(views.home.as_view()), name='home'),
     path('usuarios/', include('usuarios_app.urls')),
     path('proveedores/', include('proveedores_app.urls')),
-    path('medidas/', include('medidas_app.urls'))
+    path('medidas/', include('medidas_app.urls')),
+    path('insumos/', include('insumos_app.urls')),
+    path('compras/', include('compras_app.urls')),
+    path('inventario/', include('inventario_insumos_app.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
