@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="pantalla-completa">
+    <div class="menu">
+        <h1 class="text-center">
+            Agregar Detalle
+        </h1>
+        </hr>
+        <div class="row mt-4">
+            <form class="col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="d-flex">
+                    <div class="d-flex col-lg-6 col-md-6 col-sm-12 col-12 px-2 align-items-center justify-content-end">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div>
+                                {{ form.insumo.label_tag }}
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    {{ form.insumo }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex col-lg-6 col-md-6 col-sm-12 col-12 px-2 align-items-center justify-content-start">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div>
+                                {{ form.cantidad.label_tag }}
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                    {{ form.cantidad }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center mt-2">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div>
+                            {{ form.merma.label_tag }}
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                {{ form.merma }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-end justify-content-end mt-3 px-2">
+                    <a class="btn btn-danger me-2" href="{% url "lista_detallereceta" id %}">
+                        Regresar
+                    </a>
+                    <button class="btn btn-success ms-2" type="submit">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12 mt-3">
+                <div class="d-flex align-items-center justify-content-center">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <th class="text-center">
+                                Insumo
+                            </th>
+                            <th class="text-center">
+                                Cantidad
+                            </th>
+                            <th class="text-center">
+                                Merma
+                            </th>
+                            <th class="text-center">
+                                Acciones
+                            </th>
+                        </thead>
+                        <tbody>
+                            {% for item in lista %}
+                            <tr>
+                                <td class="text-center">
+                                    {{ item.insumo.nombre }} - {{ item.insumo.medida }}
+                                </td>
+                                <td class="text-center">
+                                    {{ item.cantidad }}
+                                </td>
+                                <td class="text-center">
+                                    {{ item.merma }}
+                                </td>
+                                <td class="text-center">
+                                    <a class="btn btn-secondary" href="{% url "editar_detallereceta" item.id %}">
+                                        Editar Detalle
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>
+                            {{ error|escape }}
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>
+                        {{ error|escape }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock content %}
