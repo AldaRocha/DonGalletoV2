@@ -3,8 +3,8 @@
 {% block content %}
 <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
-    <div class="pantalla-completa-inicio">
-        <div class="menu">
+    <div class="pantalla-completa">
+        {% comment %} <div class="menu">
             <h1 class="text-center">
                 Don Galleto
             </h1>
@@ -72,7 +72,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
     </div>
 </form>
 {% endblock content %}

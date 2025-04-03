@@ -1,103 +1,84 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="pantalla-completa">
-    <div class="menu">
-        <h1 class="text-center">
-            Editar Usuario
-        </h1>
-        </hr>
-        <div class="row mt-4">
-            <form class="col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="d-flex">
-                    <div class="d-flex col-lg-6 col-md-6 col-sm-12 col-12 px-2 align-items-center justify-content-end">
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div>
-                                {{ form.first_name.label_tag }}
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                                    {{ form.first_name }}
-                                </div>
-                            </div>
-                            <div>
-                                {{ form.email.label_tag }}
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                                    {{ form.email }}
-                                </div>
-                            </div>
-                            <div>
-                                {{ form.password1.label_tag }}
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                                    {{ form.password1 }}
-                                </div>
-                            </div>
-                        </div>
+<div class="edit-container">
+    <div class="form-card">
+        <div class="page-header">
+            <h1><i class="fas fa-user-edit"></i> Editar Usuario</h1>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" class="edit-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-column">
+                    <div class="form-group" style="order: 1;">
+                        {{ form.first_name.label_tag }}
+                        {{ form.first_name }}
                     </div>
-                    <div class="d-flex col-lg-6 col-md-6 col-sm-12 col-12 px-2 align-items-center justify-content-start">
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div>
-                                {{ form.last_name.label_tag }}
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                                    {{ form.last_name }}
-                                </div>
-                            </div>
-                            <div>
-                                {{ form.username.label_tag }}
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                                    {{ form.username }}
-                                </div>
-                            </div>
-                            <div>
-                                {{ form.password2.label_tag }}
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                                    {{ form.password2 }}
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group" style="order: 3;">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group" style="order: 5;">
+                        {{ form.password1.label_tag }}
+                        {{ form.password1 }}
+                        <span class="help-text">*Dejar en blanco si no desea cambiar la contraseña</span>
+                    </div>
+                    <div class="form-group" style="order: 7;">
+                        {{ form.grupo.label_tag }}
+                        {{ form.grupo }}
                     </div>
                 </div>
-                <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center mt-2">
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                        <div>
-                            {{ form.grupo.label_tag }}
-                            <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center">
-                                {{ form.grupo }}
-                            </div>
-                        </div>
+                
+                <div class="form-column">
+                    <div class="form-group" style="order: 2;">
+                        {{ form.last_name.label_tag }}
+                        {{ form.last_name }}
                     </div>
-                </div>
-                <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center mt-2">
-                    <div>
+                    <div class="form-group" style="order: 4;">
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+                    </div>
+                    <div class="form-group" style="order: 6;">
+                        {{ form.password2.label_tag }}
+                        {{ form.password2 }}
+                    </div>
+                    <div class="form-group" style="order: 8;">
                         {{ form.is_active.label_tag }}
-                        <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-center justify-content-center">
+                        <div class="checkbox-container">
                             {{ form.is_active }}
                         </div>
                     </div>
                 </div>
-                <div class="d-flex col-lg-12 col-md-12 col-sm-12 col-12 align-items-end justify-content-end mt-3 px-2">
-                    <a class="btn btn-danger me-2" href="{% url "lista_usuarios" %}">
-                        Regresar
-                    </a>
-                    <button class="btn btn-success ms-2" type="submit">
-                        Guardar
-                    </button>
-                </div>
-            </form>
-            <ul>
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        <li>
-                            {{ error|escape }}
-                        </li>
-                    {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                    <li>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'lista_usuarios' %}" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="save-button">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+
+        {% if form.errors %}
+        <div class="error-list">
+            <div class="error-header">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Por favor corrige los siguientes errores:</span>
+            </div>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="error-item">
+                        <i class="fas fa-times-circle"></i>
                         {{ error|escape }}
-                    </li>
+                    </div>
                 {% endfor %}
-            </ul>
+            {% endfor %}
         </div>
+        {% endif %}
     </div>
 </div>
+
 {% endblock content %}
