@@ -16,7 +16,7 @@ class InsumoRegistrarForm(forms.ModelForm):
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "descripcion": forms.TextInput(attrs={"class": "form-control"}),
-            "cantidad_minima": forms.TextInput(attrs={"class": "form-control"})
+            "cantidad_minima": forms.NumberInput(attrs={"class": "form-control"})
         }
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -38,7 +38,7 @@ class InsumoEditarForm(forms.ModelForm):
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "descripcion": forms.TextInput(attrs={"class": "form-control"}),
-            "cantidad_minima": forms.TextInput(attrs={"class": "form-control"})
+            "cantidad_minima": forms.NumberInput(attrs={"class": "form-control"})
         }
     def save(self, id):
         item = models.Insumo.objects.filter(id=id).first()

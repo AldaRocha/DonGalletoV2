@@ -23,12 +23,37 @@
         </div>
         <div class="user-info">
             <i class="fas fa-user-circle"></i>
-            <span>{{ user.first_name }} {{ user.last_name }}<br><small>{{ user.is_superuser }}</small></span>
+            <span>
+                {{ user.first_name }} {{ user.last_name }}
+                <br>
+                <small>
+                    {% for group in user.groups.all %}
+                        {{ group.name }}
+                    {% empty %}
+                        El usuario no pertenece a ningún grupo.
+                    {% endfor %}
+                </small>
+            </span>
             <div class="logout-dropdown">
-                <span class="user-info-mobile">{{ user.first_name }} {{ user.last_name }}<br><small>{{ user.is_superuser }}</small></span>
+                <span class="user-info-mobile">
+                    {{ user.first_name }} {{ user.last_name }}
+                    <br>
+                    <small>
+                        {% for group in user.groups.all %}
+                            {{ group.name }}
+                        {% empty %}
+                            El usuario no pertenece a ningún grupo.
+                        {% endfor %}
+                    </small>
+                </span>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
-                    <button type="submit"><i class="fa-solid fa-arrow-right-from-bracket"></i><p>Cerrar sesión</p></button>
+                    <button type="submit">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <p>
+                            Cerrar sesión
+                        </p>
+                    </button>
                 </form>
             </div>
         </div>
@@ -37,29 +62,59 @@
     <div class="sidebar {% if is_sidebar_collapsed %}collapsed{% endif %}" id="sidebar">
         <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
             <i class="fa-solid fa-dashboard"></i>
-            <span>Dashboard</span>
+            <span>
+                Dashboard
+            </span>
         </a>
         <a href="{% url 'lista_usuarios' %}" class="{% if '/usuarios/' in request.path %}active{% endif %}">
             <i class="fas fa-users"></i>
-            <span>Usuarios</span>
+            <span>
+                Usuarios
+            </span>
         </a>   
         <a href="{% url 'lista_proveedores' %}" class="{% if request.resolver_match.url_name == 'lista_proveedores' %}active{% endif %}">
             <i class="fa-solid fa-bag-shopping"></i>
-            <span>Proveedores</span>
+            <span>
+                Proveedores
+            </span>
         </a>
         <a href="{% url 'lista_medidas' %}">
             <i class="fa-solid fa-ruler-horizontal"></i>
-            <span>Medidas</span>
+            <span>
+                Medidas
+            </span>
         </a>
-        <a href="#">
-            <i class="fa-solid fa-clipboard"></i>
-            <span>Almacén</span>
+        <a href="{% url 'lista_insumos' %}">
+            <i class="fa-solid fa-egg"></i>
+            <span>
+                Insumos
+            </span>
         </a>
-        <a href="#">
+        <a href="{% url 'lista_compras' %}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>
+                Compras
+            </span>
+        </a>
+        <a href="{% url 'lista_inventario' %}">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <span>
+                Inventario Insumos
+            </span>
+        </a>
+        <a href="{% url 'lista_galletas' %}">
+            <i class="fa-solid fa-cookie"></i>
+            <span>
+                Galletas
+            </span>
+        </a>
+        <a href="{% url 'lista_recetas' %}">
             <i class="fa-solid fa-book"></i>
-            <span>Recetas</span>
+            <span>
+                Recetas
+            </span>
         </a>
-        <a href="#">
+        <a href="{% url 'lista_producciones' %}">
             <i class="fa-solid fa-kitchen-set"></i>
             <span>Producción</span>
         </a>

@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'compras_app',
     'inventario_insumos_app',
     'galletas_app',
-    'recetas_app'
+    'recetas_app',
+    'producciones_app'
 ]
 
 

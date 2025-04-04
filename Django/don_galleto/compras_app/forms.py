@@ -74,7 +74,7 @@ class DetalleCompraRegistrarForm(forms.ModelForm):
             self.save_m2m()
             InventarioInsumos.objects.create(
                 detalle_compra=instance,
-                cantidad_existente=instance.cantidad*100
+                cantidad_existente=instance.cantidad
             )
         return instance
 
@@ -100,4 +100,7 @@ class DetalleCompraEditarForm(forms.ModelForm):
         item.precio_unitario = self.cleaned_data["precio_unitario"]
         item.fecha_caducidad = self.cleaned_data["fecha_caducidad"]
         item.save()
+        inventario = InventarioInsumos.objects.filter(detalle_compra_id=id).first()
+        inventario.cantidad_existente = self.cleaned_data["cantidad"]
+        inventario.save()
         return item

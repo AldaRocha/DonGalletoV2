@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView
 from compras_app.models import Compra, DetalleCompra
@@ -104,3 +104,12 @@ class EditarDetalleComprasView(FormView):
         id = self.kwargs.get("id")
         detalle_compra = DetalleCompra.objects.filter(id=id).first()
         return reverse("crear_detallecompras", kwargs={"id": detalle_compra.compra_id})
+
+def EliminarDetalleComprasView(request, pk):
+    if request.method == "POST":
+        detalle_compra = get_object_or_404(DetalleCompra, pk=pk)
+        compra_id = detalle_compra.compra_id
+        detalle_compra.delete()
+        return redirect(reverse("lista_detallecompras", kwargs={"id": compra_id}))
+    else:
+        return redirect(reverse_lazy("lista_compras"))

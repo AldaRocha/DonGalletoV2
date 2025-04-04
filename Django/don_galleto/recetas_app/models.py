@@ -12,8 +12,8 @@ class Receta(models.Model):
         return f"{self.id}-{self.nombre}-{self.descripcion}-{self.galleta.nombre}-{self.para_produccion}"
 
 class DetalleReceta(models.Model):
-    cantidad = models.DecimalField(decimal_places=2, max_digits=10)
-    merma = models.DecimalField(decimal_places=2, max_digits=10)
+    cantidad = models.DecimalField(decimal_places=3, max_digits=10)
+    merma = models.DecimalField(decimal_places=3, max_digits=10)
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, null=False, blank=False)
     insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE, null=False, blank=False)
     def _str_(self):

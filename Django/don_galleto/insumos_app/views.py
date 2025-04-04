@@ -1,9 +1,10 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView
 from insumos_app.models import Insumo
 from . import forms
 from django.urls import reverse_lazy
+from django.http import JsonResponse
 
 # Create your views here.
 class ListaInsumosView(TemplateView):
@@ -35,3 +36,11 @@ class EditarInsumosView(FormView):
     def form_valid(self, form):
         form.save(self.kwargs.get("id"))
         return super().form_valid(form)
+
+def EliminarInsumoView(request, pk):
+    if request.method == "POST":
+        insumo = get_object_or_404(Insumo, pk=pk)
+        insumo.delete()
+        return redirect(reverse_lazy("lista_insumos"))
+    else:
+        return redirect(reverse_lazy("lista_insumos"))
