@@ -1,9 +1,10 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView
 from recetas_app.models import Receta, DetalleReceta
 from . import forms
 from django.urls import reverse_lazy, reverse
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 class ListaRecetasView(TemplateView):
@@ -21,8 +22,12 @@ class CrearRecetasView(FormView):
     form_class = forms.RecetaRegistrarForm
     success_url = reverse_lazy("lista_recetas")
     def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
+        try:
+            form.save()
+            return super().form_valid(form)
+        except ValidationError as e:
+            form.add_error(None, e.message)
+            return self.form_invalid(form)
 
 class EditarRecetasView(FormView):
     template_name = "editar_recetas.html"
@@ -35,8 +40,12 @@ class EditarRecetasView(FormView):
         kwargs["instance"] = receta
         return kwargs
     def form_valid(self, form):
-        form.save(self.kwargs.get("id"))
-        return super().form_valid(form)
+        try:
+            form.save(self.kwargs.get("id"))
+            return super().form_valid(form)
+        except ValidationError as e:
+            form.add_error(None, e.message)
+            return self.form_invalid(form)
 
 class ListaDetalleRecetaView(TemplateView):
     template_name = "lista_detallereceta.html"
@@ -90,3 +99,12 @@ class EditarDetalleRecetaView(FormView):
         id = self.kwargs.get("id")
         detalle_receta = DetalleReceta.objects.filter(id=id).first()
         return reverse("crear_detallereceta", kwargs={"id": detalle_receta.receta_id})
+
+def EliminarDetalleRecetaView(request, pk):
+    if request.method == "POST":
+        detalle_receta = get_object_or_404(DetalleReceta, pk=pk)
+        receta_id = detalle_receta.receta_id
+        detalle_receta.delete()
+        return redirect(reverse("lista_detallereceta", kwargs={"id": receta_id}))
+    else:
+        return redirect(reverse_lazy("lista_recetas"))

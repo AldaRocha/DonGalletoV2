@@ -28,8 +28,8 @@ class Migration(migrations.Migration):
             name='DetalleReceta',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cantidad', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('merma', models.DecimalField(decimal_places=2, max_digits=10)),
+                ('cantidad', models.DecimalField(decimal_places=3, max_digits=10)),
+                ('merma', models.DecimalField(decimal_places=3, max_digits=10)),
                 ('insumo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='insumos_app.insumo')),
                 ('receta', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='recetas_app.receta')),
             ],

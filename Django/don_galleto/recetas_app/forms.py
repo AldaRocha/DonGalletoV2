@@ -3,6 +3,7 @@ from recetas_app.models import Receta, DetalleReceta
 from recetas_app import models
 from galletas_app.models import Galleta
 from insumos_app.models import Insumo
+from django.core.exceptions import ValidationError
 
 class RecetaRegistrarForm(forms.ModelForm):
     galleta = forms.ModelChoiceField(
@@ -21,6 +22,9 @@ class RecetaRegistrarForm(forms.ModelForm):
         }
     def save(self, commit=True):
         instance = super().save(commit=False)
+        if instance.para_produccion:
+            if Receta.objects.filter(galleta_id=instance.galleta, para_produccion=True).exists():
+                raise ValidationError("Solo se puede tener una receta activa por galleta para producción")
         if commit:
             instance.save()
             self.save_m2m()
@@ -43,6 +47,9 @@ class RecetaEditarForm(forms.ModelForm):
         }
     def save(self, id):
         item = models.Receta.objects.filter(id=id).first()
+        if self.cleaned_data["para_produccion"]:
+            if Receta.objects.filter(galleta_id=item.galleta, para_produccion=True).exists():
+                raise ValidationError("Solo se puede tener una receta activa por galleta para producción")
         item.nombre = self.cleaned_data["nombre"]
         item.descripcion = self.cleaned_data["descripcion"]
         item.para_produccion = self.cleaned_data["para_produccion"]

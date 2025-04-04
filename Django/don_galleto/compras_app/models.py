@@ -15,8 +15,8 @@ class Compra(models.Model):
 class DetalleCompra(models.Model):
     compra = models.ForeignKey(Compra, on_delete=models.CASCADE, null=False, blank=False)
     insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE, null=False, blank=False)
-    cantidad = models.DecimalField(max_digits=10, decimal_places=2)
-    precio_unitario = models.DecimalField(max_digits=10 , decimal_places=2)
+    cantidad = models.DecimalField(max_digits=10, decimal_places=3)
+    precio_unitario = models.DecimalField(max_digits=10 , decimal_places=3)
     fecha_caducidad = models.DateTimeField(default=now)
     def __str__(self):
         return f"{self.id}-{self.compra.id}-{self.insumo.nombre}-{self.cantidad}-{self.precio_unitario}-{self.fecha_caducidad}"

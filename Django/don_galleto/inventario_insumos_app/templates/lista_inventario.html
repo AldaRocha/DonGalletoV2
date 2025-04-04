@@ -7,9 +7,6 @@
             Inventario
         </h1>
         </hr>
-        <a class="btn btn-primary" href="{% url "crear_inventario" %}">
-            Agregar Inventario
-        </a>
         <div class="row d-flex mt-4">
             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="d-flex align-items-center justify-content-center">
@@ -38,23 +35,23 @@
                             {% for item in lista %}
                                 <tr>
                                     <td class="text-center">
-                                        {{ item.detalle_compra.insumo.nombre }}
+                                        {{ item.detalle_compra.insumo }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.detalle_compra.compra.fecha_compra }}
+                                        {{ item.detalle_compra.compra.fecha_compra|date }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.detalle_compra.fecha_caducidad }}
+                                        {{ item.detalle_compra.fecha_caducidad|date }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.cantidad_existente }}&percnt;
+                                        {{ item.cantidad_existente }} {{ item.detalle_compra.insumo.medida.nomenclatura }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.detalle_compra.insumo.cantidad_minima }}&percnt;
+                                        {{ item.detalle_compra.insumo.cantidad_minima }} {{ item.detalle_compra.insumo.medida.nomenclatura }}
                                     </td>
                                     <td class="text-center">
                                         <a class="btn btn-secondary" href="{% url "editar_compras" item.id %}">
-                                            Editar Compra
+                                            Agregar a merma
                                         </a>
                                     </td>
                                 </tr>

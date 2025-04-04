@@ -83,10 +83,10 @@
                                         {{ item.insumo }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.fecha_caducidad }}
+                                        {{ item.fecha_caducidad|date }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.cantidad }}
+                                        {{ item.cantidad }} {{ item.insumo.medida.nomenclatura }}
                                     </td>
                                     <td class="text-center">
                                         &dollar;{{ item.precio_unitario|floatformat:2 }}

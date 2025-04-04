@@ -41,15 +41,18 @@
                                         {{ item.descripcion }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.medida.nombre }}
+                                        {{ item.medida }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.cantidad_minima }}&percnt;
+                                        {{ item.cantidad_minima }} {{ item.medida.nomenclatura }}
                                     </td>
                                     <td class="text-center">
                                         <a class="btn btn-secondary" href="{% url "editar_insumos" item.id %}">
                                             Editar Insumo
                                         </a>
+                                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ item.id }}">
+                                            Eliminar
+                                        </button>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -65,4 +68,49 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este insumo? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="POST" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-danger" id="confirmDelete">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let insumoId = null;
+
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        insumoId = button.getAttribute('data-id');
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', function () {
+        if (insumoId) {
+            const form = document.getElementById('deleteForm');
+            form.action = `/insumos/eliminar_insumos/${insumoId}/`;
+            form.submit();
+        }
+    });
+</script>
 {% endblock content %}
