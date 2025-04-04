@@ -1,11 +1,18 @@
 from django import forms
 from galletas_app.models import Galleta
 from galletas_app import models
+from medidas_app.models import Medida
 
 class GalletaRegistrarForm(forms.ModelForm):
+    medida = forms.ModelChoiceField(
+        queryset=Medida.objects.all(),
+        label="Medida",
+        empty_label="Seleccione una medida",
+        widget=forms.Select(attrs={"class": "form-control"})
+    )
     class Meta:
         model = Galleta
-        fields = ["nombre", "descripcion", "peso_individual", "imagen"]
+        fields = ["nombre", "descripcion", "peso_individual", "imagen", "medida"]
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "descripcion": forms.TextInput(attrs={"class": "form-control"}),
@@ -20,9 +27,15 @@ class GalletaRegistrarForm(forms.ModelForm):
         return instance
 
 class GalletaEditarForm(forms.ModelForm):
+    medida = forms.ModelChoiceField(
+        queryset=Medida.objects.all(),
+        label="Medida",
+        empty_label="Seleccione una medida",
+        widget=forms.Select(attrs={"class": "form-control"})
+    )
     class Meta:
         model = Galleta
-        fields = ["nombre", "descripcion", "peso_individual", "imagen"]
+        fields = ["nombre", "descripcion", "peso_individual", "imagen", "medida"]
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "descripcion": forms.TextInput(attrs={"class": "form-control"}),
@@ -36,5 +49,6 @@ class GalletaEditarForm(forms.ModelForm):
         item.peso_individual = self.cleaned_data["peso_individual"]
         if self.cleaned_data.get("imagen"):
             item.imagen = self.cleaned_data["imagen"]
+        item.medida = self.cleaned_data["medida"]
         item.save()
         return item

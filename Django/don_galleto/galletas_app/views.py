@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView
 from galletas_app.models import Galleta
@@ -35,3 +35,11 @@ class EditarGalletasView(FormView):
     def form_valid(self, form):
         form.save(self.kwargs.get("id"))
         return super().form_valid(form)
+
+def EliminarGalletaView(request, pk):
+    if request.method == "POST":
+        galleta = get_object_or_404(Galleta, pk=pk)
+        galleta.delete()
+        return redirect(reverse_lazy("lista_galletas"))
+    else:
+        return redirect(reverse_lazy("lista_galletas"))

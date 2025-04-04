@@ -75,13 +75,13 @@
                             {% for item in lista %}
                             <tr>
                                 <td class="text-center">
-                                    {{ item.insumo.nombre }} - {{ item.insumo.medida }}
+                                    {{ item.insumo }}
                                 </td>
                                 <td class="text-center">
-                                    {{ item.cantidad }}
+                                    {{ item.cantidad }} {{ item.insumo.medida.nomenclatura }}
                                 </td>
                                 <td class="text-center">
-                                    {{ item.merma }}
+                                    {{ item.merma }} {{ item.insumo.medida.nomenclatura }}
                                 </td>
                                 <td class="text-center">
                                     <a class="btn btn-secondary" href="{% url "editar_detallereceta" item.id %}">
