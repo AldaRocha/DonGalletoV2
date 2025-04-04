@@ -22,7 +22,7 @@
                                 Descripci&oacute;n
                             </th>
                             <th class="text-center">
-                                Peso (Gramos)
+                                Peso
                             </th>
                             <th class="text-center">
                                 Imagen
@@ -41,7 +41,7 @@
                                         {{ item.descripcion }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item.peso_individual }}
+                                        {{ item.peso_individual }} {{ item.medida }}
                                     </td>
                                     <td class="text-center">
                                         {% if item.imagen.url is not None %}
@@ -52,6 +52,9 @@
                                         <a class="btn btn-secondary" href="{% url "editar_galletas" item.id %}">
                                             Editar Galleta
                                         </a>
+                                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ item.id }}">
+                                            Eliminar
+                                        </button>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -67,4 +70,49 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="POST" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-danger" id="confirmDelete">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let galletasId = null;
+
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        galletasId = button.getAttribute('data-id');
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', function () {
+        if (galletasId) {
+            const form = document.getElementById('deleteForm');
+            form.action = `/galletas/eliminar_galletas/${galletasId}/`;
+            form.submit();
+        }
+    });
+</script>
 {% endblock content %}
