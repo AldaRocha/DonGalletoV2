@@ -2,6 +2,7 @@ from django import forms
 from galletas_app.models import Galleta
 from galletas_app import models
 from medidas_app.models import Medida
+from producciones_app.models import SolicitudProduccion
 
 class GalletaRegistrarForm(forms.ModelForm):
     medida = forms.ModelChoiceField(
@@ -23,6 +24,11 @@ class GalletaRegistrarForm(forms.ModelForm):
         instance = super().save(commit=False)
         if commit:
             instance.save()
+
+            SolicitudProduccion.objects.create(
+                galleta=instance
+            )
+
             self.save_m2m()
         return instance
 

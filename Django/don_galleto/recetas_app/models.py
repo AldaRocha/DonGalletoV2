@@ -8,7 +8,7 @@ class Receta(models.Model):
     descripcion = models.TextField(max_length=1000)
     para_produccion = models.BooleanField(default=False)
     galleta = models.ForeignKey(Galleta, on_delete=models.CASCADE, null=False, blank=False)
-    def _str_(self):
+    def __str__(self):
         return f"{self.id}-{self.nombre}-{self.descripcion}-{self.galleta.nombre}-{self.para_produccion}"
 
 class DetalleReceta(models.Model):
@@ -16,5 +16,5 @@ class DetalleReceta(models.Model):
     merma = models.DecimalField(decimal_places=3, max_digits=10)
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, null=False, blank=False)
     insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE, null=False, blank=False)
-    def _str_(self):
+    def __str__(self):
         return f"{self.id}-{self.cantidad}-{self.merma}-{self.receta.nombre}-{self.insumo.nombre}"

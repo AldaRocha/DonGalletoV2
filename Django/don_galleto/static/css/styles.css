@@ -50,6 +50,16 @@ body {
     max-width: 400px;
 }
 
+.registro-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 1000px;
+}
+
 .login-logo, .login-title {
     font-size: 2rem;
     font-weight: bold;
@@ -62,6 +72,12 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.registro-subtitle {
+    font-size: 0.95rem;
+    color: #6939b1;
+    margin-bottom: .5rem;
+}
+
 .login-logo {
     display: flex;
     justify-content: center;
@@ -71,6 +87,10 @@ body {
 .login-logo img {
     width: 90%;
     margin-bottom: 1.3rem;
+}
+
+.registro-logo img {
+    width: 50%;
 }
 
 .login-button {
@@ -87,6 +107,23 @@ body {
 
 .login-button:hover {
     background-color: rgb(161, 109, 240);
+}
+
+.login-button-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    font-weight: bold;
+    font-size: 0.95rem;
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+}
+
+.login-button-danger:hover {
+    background-color: rgb(165, 40, 52);
 }
 
 /* Layout */
@@ -140,6 +177,8 @@ body {
     padding: 1.5rem 1rem;
     transition: transform 0.3s ease;
     z-index: 1000;
+    overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 .sidebar.collapsed {
@@ -637,6 +676,15 @@ body {
         color: #de3421;
         margin: 0.5rem 0;
         font-size: 0.95rem;
+    }
+
+    .delete-link {
+        text-decoration: none;
+        margin-left: 0.5rem;
+    }
+    
+    .delete-link i:hover {
+        color: #bd2130 !important;
     }
 
     @media (max-width: 768px) {
