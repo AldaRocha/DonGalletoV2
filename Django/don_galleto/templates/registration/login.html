@@ -35,6 +35,9 @@
                 <button type="submit" class="login-button">Iniciar sesión</button>
                 <input type="hidden" name="next" value="{{ next }}">
             </form>
+            <a href="{% url 'registro' %}">
+                Crear una cuenta
+            </a>
         </div>
     </div>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>

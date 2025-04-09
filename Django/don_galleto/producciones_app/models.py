@@ -8,4 +8,11 @@ class Produccion(models.Model):
     fecha_preparacion = models.DateTimeField(default=now)
     galleta = models.ForeignKey(Galleta, on_delete=models.CASCADE, null=False, blank=False)
     def __str__(self):
-        return f"{self.id}-{self.cantidad}-{self.fecha_preparacion}-{self.galleta}"
+        return f"{self.galleta}"
+
+
+class SolicitudProduccion(models.Model):
+    fecha_solicitado = models.DateTimeField(default=now)
+    galleta = models.ForeignKey(Galleta, on_delete=models.CASCADE, null=False, blank=False)
+    def __str__(self):
+        return f"{self.galleta}"

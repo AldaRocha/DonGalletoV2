@@ -4,10 +4,14 @@ from django.views.generic import FormView
 from insumos_app.models import Insumo
 from . import forms
 from django.urls import reverse_lazy
-from django.http import JsonResponse
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
-class ListaInsumosView(TemplateView):
+class ListaInsumosView(PermissionRequiredMixin, TemplateView):
+    permission_required = ["insumos_app.view_Insumo"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "lista_insumos.html"
     def get_context_data(self):
         lista = Insumo.objects.all()
@@ -15,7 +19,11 @@ class ListaInsumosView(TemplateView):
             "lista": lista
         }
 
-class CrearInsumosView(FormView):
+class CrearInsumosView(PermissionRequiredMixin, FormView):
+    permission_required = ["insumos_app.add_Insumo"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "crear_insumos.html"
     form_class = forms.InsumoRegistrarForm
     success_url = reverse_lazy("lista_insumos")
@@ -23,7 +31,11 @@ class CrearInsumosView(FormView):
         form.save()
         return super().form_valid(form)
 
-class EditarInsumosView(FormView):
+class EditarInsumosView(PermissionRequiredMixin, FormView):
+    permission_required = ["insumos_app.edit_Insumo"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "editar_insumos.html"
     form_class = forms.InsumoEditarForm
     success_url = reverse_lazy("lista_insumos")
