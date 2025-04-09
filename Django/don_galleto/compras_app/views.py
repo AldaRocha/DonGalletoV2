@@ -5,9 +5,14 @@ from compras_app.models import Compra, DetalleCompra
 from . import forms
 from django.urls import reverse_lazy, reverse
 from decimal import Decimal
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
-class ListaComprasView(TemplateView):
+class ListaComprasView(PermissionRequiredMixin, TemplateView):
+    permission_required = ["compras_app.view_Compra"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "lista_compras.html"
     def get_context_data(self):
         lista = Compra.objects.all()
@@ -15,7 +20,11 @@ class ListaComprasView(TemplateView):
             "lista": lista
         }
 
-class CrearComprasView(FormView):
+class CrearComprasView(PermissionRequiredMixin, FormView):
+    permission_required = ["compras_app.add_Compra"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "crear_compras.html"
     form_class = forms.CompraRegistrarForm
     success_url = reverse_lazy("lista_compras")
@@ -23,7 +32,11 @@ class CrearComprasView(FormView):
         form.save()
         return super().form_valid(form)
 
-class EditarComprasView(FormView):
+class EditarComprasView(PermissionRequiredMixin, FormView):
+    permission_required = ["compras_app.edit_Compra"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "editar_compras.html"
     form_class = forms.CompraEditarForm
     success_url = reverse_lazy("lista_compras")
@@ -37,7 +50,11 @@ class EditarComprasView(FormView):
         form.save(self.kwargs.get("id"))
         return super().form_valid(form)
 
-class ListaDetalleComprasView(TemplateView):
+class ListaDetalleComprasView(PermissionRequiredMixin, TemplateView):
+    permission_required = ["compras_app.view_DetalleCompra"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "lista_detallecompras.html"
     def get_context_data(self, **kwargs):
         id = kwargs.get("id")
@@ -52,7 +69,11 @@ class ListaDetalleComprasView(TemplateView):
             "total": total
         }
 
-class CrearDetalleComprasView(FormView):
+class CrearDetalleComprasView(PermissionRequiredMixin, FormView):
+    permission_required = ["compras_app.add_DetalleCompra"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "crear_detallecompras.html"
     form_class = forms.DetalleCompraRegistrarForm
     def get_context_data(self, **kwargs):
@@ -75,7 +96,11 @@ class CrearDetalleComprasView(FormView):
     def get_success_url(self):
         return reverse("crear_detallecompras", kwargs={"id": self.kwargs.get("id")})
 
-class EditarDetalleComprasView(FormView):
+class EditarDetalleComprasView(PermissionRequiredMixin, FormView):
+    permission_required = ["compras_app.edit_DetalleCompra"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "editar_detallecompras.html"
     form_class = forms.DetalleCompraEditarForm
     def get_context_data(self, **kwargs):

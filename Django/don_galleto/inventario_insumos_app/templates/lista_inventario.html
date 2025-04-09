@@ -4,7 +4,7 @@
 <div class="pantalla-completa">
     <div class="menu">
         <h1 class="text-center">
-            Inventario
+            Inventario Insumos
         </h1>
         </hr>
         <div class="row d-flex mt-4">
@@ -12,49 +12,51 @@
                 <div class="d-flex align-items-center justify-content-center">
                     <table class="table table-hover table-striped">
                         <thead>
-                            <th class="text-center">
-                                Insumo
-                            </th>
-                            <th class="text-center">
-                                Comprado
-                            </th>
-                            <th class="text-center">
-                                Vencimiento
-                            </th>
-                            <th class="text-center">
-                                Cantidad Existente
-                            </th>
-                            <th class="text-center">
-                                Cantidad M&iacute;nima
-                            </th>
-                            <th class="text-center">
-                                Acciones
-                            </th>
+                            <tr>
+                                <th class="text-center">
+                                    Insumo
+                                </th>
+                                <th class="text-center">
+                                    Comprado
+                                </th>
+                                <th class="text-center">
+                                    Fecha de caducidad
+                                </th>
+                                <th class="text-center">
+                                    Cantidad Existente
+                                </th>
+                                <th class="text-center">
+                                    Cantidad Mínima
+                                </th>
+                                <th class="text-center">
+                                    Acciones
+                                </th>
+                            </tr>
                         </thead>
                         <tbody>
                             {% for item in lista %}
-                                <tr>
-                                    <td class="text-center">
-                                        {{ item.detalle_compra.insumo }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.detalle_compra.compra.fecha_compra|date }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.detalle_compra.fecha_caducidad|date }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.cantidad_existente }} {{ item.detalle_compra.insumo.medida.nomenclatura }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.detalle_compra.insumo.cantidad_minima }} {{ item.detalle_compra.insumo.medida.nomenclatura }}
-                                    </td>
-                                    <td class="text-center">
-                                        <a class="btn btn-secondary" href="{% url "editar_compras" item.id %}">
-                                            Agregar a merma
-                                        </a>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td class="text-center">
+                                    {{ item.detalle_compra__insumo__nombre }}
+                                </td>
+                                <td class="text-center">
+                                    {{ item.detalle_compra__compra__fecha_compra|date }}
+                                </td>
+                                <td class="text-center">
+                                    {{ item.detalle_compra__fecha_caducidad|date }}
+                                </td>
+                                <td class="text-center">
+                                    {{ item.cantidad_existente }} {{ item.detalle_compra__insumo__medida__nomenclatura }}
+                                </td>
+                                <td class="text-center">
+                                    {{ item.detalle_compra__insumo__cantidad_minima }} {{ item.detalle_compra__insumo__medida__nomenclatura }}
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#mermaModal" data-id="{{ item.id }}">
+                                        Agregar a merma
+                                    </button>
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -68,4 +70,43 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="mermaModal" tabindex="-1" aria-labelledby="mermaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mermaModalLabel">Confirmar envío a merma</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas mandar este insumo a merma? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="mermaForm" method="POST" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <button type="button" class="btn btn-danger" id="confirmMerma">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let insumoId = null;
+
+    const mermaModal = document.getElementById('mermaModal');
+    mermaModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        insumoId = button.getAttribute('data-id');
+    });
+
+    document.getElementById('confirmMerma').addEventListener('click', function () {
+        if (insumoId) {
+            const form = document.getElementById('mermaForm');
+            form.action = `/inventario_insumos/mandar_a_merma/${insumoId}/`;
+            form.submit();
+        }
+    });
+</script>
 {% endblock content %}

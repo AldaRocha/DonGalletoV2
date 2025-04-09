@@ -1,12 +1,17 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView
 from django.contrib.auth.models import User
 from . import forms
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
-class ListaUsuariosView(TemplateView):
+class ListaUsuariosView(PermissionRequiredMixin, TemplateView):
+    permission_required = ["usuarios_app.view_User"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "lista_usuarios.html"
     def get_context_data(self):
         lista = User.objects.all()
@@ -14,7 +19,11 @@ class ListaUsuariosView(TemplateView):
             "lista": lista
         }
 
-class CrearUsuariosView(FormView):
+class CrearUsuariosView(PermissionRequiredMixin, FormView):
+    permission_required = ["usuarios_app.add_User"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "crear_usuarios.html"
     form_class = forms.UsuarioRegistroForm
     success_url = reverse_lazy("lista_usuarios")
@@ -22,7 +31,11 @@ class CrearUsuariosView(FormView):
         form.save()
         return super().form_valid(form)
 
-class EditarUsuariosView(FormView):
+class EditarUsuariosView(PermissionRequiredMixin, FormView):
+    permission_required = ["usuarios_app.edit_User"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "editar_usuarios.html"
     form_class = forms.UsuarioEditarForm
     success_url = reverse_lazy("lista_usuarios")

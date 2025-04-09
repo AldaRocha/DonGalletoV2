@@ -14,7 +14,7 @@ class CompraRegistrarForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "form-control"})
     )
     usuario = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=User.objects.filter(groups__name="Administrador"),
         label="Realizado por",
         empty_label="Selecciona el usuario",
         widget=forms.Select(attrs={"class": "form-control"})
@@ -37,7 +37,7 @@ class CompraEditarForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "form-control"})
     )
     usuario = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=User.objects.filter(groups__name="Administrador"),
         label="Realizado por",
         empty_label="Selecciona el usuario",
         widget=forms.Select(attrs={"class": "form-control"})

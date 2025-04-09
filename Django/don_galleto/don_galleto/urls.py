@@ -24,15 +24,20 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('cuentas/', include('django.contrib.auth.urls')),
+    path('cuentas/registro', views.registro, name="registro"),
     path('home', login_required(views.home.as_view()), name='home'),
     path('usuarios/', include('usuarios_app.urls')),
     path('proveedores/', include('proveedores_app.urls')),
     path('medidas/', include('medidas_app.urls')),
     path('insumos/', include('insumos_app.urls')),
     path('compras/', include('compras_app.urls')),
-    path('inventario/', include('inventario_insumos_app.urls')),
+    path('inventario_insumos/', include('inventario_insumos_app.urls')),
     path('galletas/', include('galletas_app.urls')),
     path('recetas/', include('recetas_app.urls')),
-    path('producciones/', include('producciones_app.urls'))
+    path('producciones/', include('producciones_app.urls')),
+    path('mermas/', include('mermas_app.urls')),
+    path('inventario_galletas/', include('inventario_galletas_app.urls')),
+    #path('ventas/', include('ventas_app.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+handler404 = views.custom_404
+handler500 = views.custom_500
