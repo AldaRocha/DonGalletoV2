@@ -13,3 +13,7 @@ env/
 
 # VS Code
 .vscode/
+
+# SQLite
+*.sqlite3
+db.sqlite3
