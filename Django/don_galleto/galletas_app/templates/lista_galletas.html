@@ -52,6 +52,9 @@
                                         <a class="btn btn-secondary" href="{% url "editar_galletas" item.id %}">
                                             Editar Galleta
                                         </a>
+                                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modal" data-id="{{ item.id }}">
+                                            Solicitar Producci&oacute;n
+                                        </button>
                                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ item.id }}">
                                             Eliminar
                                         </button>
@@ -63,10 +66,46 @@
                 </div>
             </div>
         </div>
+        {% if messages %}
+            <div class="alert-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         <div class="d-flex align-items-center justify-content-end">
             <a class="btn btn-danger" href="{% url "home" %}">
                 Regresar
             </a>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">
+                    Confirmar solicitud
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas solicitar producci&oacute;n este producto?
+            </div>
+            <div class="modal-footer">
+                <form id="Form" method="POST" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-success" id="confirmSolicitud">
+                    Solicitar
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -101,12 +140,26 @@
 <script>
     let galletasId = null;
 
+    const Modal = document.getElementById('Modal');
+    Modal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        galletasId = button.getAttribute('data-id');
+    });
+
     const deleteModal = document.getElementById('deleteModal');
     deleteModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
         galletasId = button.getAttribute('data-id');
     });
 
+    document.getElementById('confirmSolicitud').addEventListener('click', function () {
+        if (galletasId) {
+            const form = document.getElementById('Form');
+            form.action = `/galletas/solicitar_galletas/${galletasId}/`;
+            form.submit();
+        }
+    });
+    
     document.getElementById('confirmDelete').addEventListener('click', function () {
         if (galletasId) {
             const form = document.getElementById('deleteForm');

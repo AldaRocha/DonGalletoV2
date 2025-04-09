@@ -1,12 +1,17 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView
 from proveedores_app.models import Proveedor
 from . import forms
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
-class ListaProveedoresView(TemplateView):
+class ListaProveedoresView(PermissionRequiredMixin, TemplateView):
+    permission_required = ["proveedores_app.view_Proveedor"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "lista_proveedores.html"
     def get_context_data(self):
         lista = Proveedor.objects.all()
@@ -14,7 +19,11 @@ class ListaProveedoresView(TemplateView):
             "lista": lista
         }
 
-class CrearProveedoresView(FormView):
+class CrearProveedoresView(PermissionRequiredMixin, FormView):
+    permission_required = ["proveedores_app.add_Proveedor"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "crear_proveedores.html"
     form_class = forms.ProveedorRegistrarForm
     success_url = reverse_lazy("lista_proveedores")
@@ -22,7 +31,11 @@ class CrearProveedoresView(FormView):
         form.save()
         return super().form_valid(form)
 
-class EditarProveedoresView(FormView):
+class EditarProveedoresView(PermissionRequiredMixin, FormView):
+    permission_required = ["proveedores_app.edit_Proveedor"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "editar_proveedores.html"
     form_class = forms.ProveedorEditarForm
     success_url = reverse_lazy("lista_proveedores")

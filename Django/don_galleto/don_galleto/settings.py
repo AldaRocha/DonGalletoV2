@@ -49,7 +49,10 @@ INSTALLED_APPS = [
     'inventario_insumos_app',
     'galletas_app',
     'recetas_app',
-    'producciones_app'
+    'producciones_app',
+    'mermas_app',
+    'inventario_galletas_app',
+    'ventas_app'
 ]
 
 
@@ -89,8 +92,12 @@ WSGI_APPLICATION = 'don_galleto.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'DonGalletoDjango',
+        'USER': 'Galleto',
+        'PASSWORD': 'Galletas1234',
+        'HOST': 'localhost',
+        'PORT': '3306'
     }
 }
 
