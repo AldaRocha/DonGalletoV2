@@ -4,9 +4,16 @@ from django.views.generic import FormView
 from galletas_app.models import Galleta
 from . import forms
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from producciones_app.models import SolicitudProduccion
+from django.contrib import messages
 
 # Create your views here.
-class ListaGalletasView(TemplateView):
+class ListaGalletasView(PermissionRequiredMixin, TemplateView):
+    permission_required = ["galletas_app.view_Galleta"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "lista_galletas.html"
     def get_context_data(self):
         lista = Galleta.objects.all()
@@ -14,7 +21,11 @@ class ListaGalletasView(TemplateView):
             "lista": lista
         }
 
-class CrearGalletasView(FormView):
+class CrearGalletasView(PermissionRequiredMixin, FormView):
+    permission_required = ["galletas_app.add_Galleta"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "crear_galletas.html"
     form_class = forms.GalletaRegistrarForm
     success_url = reverse_lazy("lista_galletas")
@@ -22,7 +33,11 @@ class CrearGalletasView(FormView):
         form.save()
         return super().form_valid(form)
 
-class EditarGalletasView(FormView):
+class EditarGalletasView(PermissionRequiredMixin, FormView):
+    permission_required = ["galletas_app.edit_Galleta"]
+    login_url = "login"
+    def handle_no_permission(self):
+        return redirect("home")
     template_name = "editar_galletas.html"
     form_class = forms.GalletaEditarForm
     success_url = reverse_lazy("lista_galletas")
@@ -35,6 +50,22 @@ class EditarGalletasView(FormView):
     def form_valid(self, form):
         form.save(self.kwargs.get("id"))
         return super().form_valid(form)
+
+def SolicitarGalletasView(request, pk):
+    if request.method == "POST":
+        galleta = get_object_or_404(Galleta, pk=pk)
+        solicitud = SolicitudProduccion.objects.filter(galleta_id=galleta.id)
+        if solicitud is not None:
+            messages.error(request, "Ya hay una solicitud de esta galleta")
+            return redirect(reverse_lazy("lista_galletas"))
+        else:
+            SolicitudProduccion.objects.create(
+                galleta=galleta
+            )
+            messages.success(request, "Solicitud creada con exito")
+            return redirect(reverse_lazy("lista_galletas"))
+    else:
+        return redirect(reverse_lazy("lista_galletas"))
 
 def EliminarGalletaView(request, pk):
     if request.method == "POST":
