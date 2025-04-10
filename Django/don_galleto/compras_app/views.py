@@ -12,7 +12,7 @@ class ListaComprasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["compras_app.view_Compra"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_compras.html"
     def get_context_data(self):
         lista = Compra.objects.all()
@@ -24,7 +24,7 @@ class CrearComprasView(PermissionRequiredMixin, FormView):
     permission_required = ["compras_app.add_Compra"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_compras.html"
     form_class = forms.CompraRegistrarForm
     success_url = reverse_lazy("lista_compras")
@@ -36,7 +36,7 @@ class EditarComprasView(PermissionRequiredMixin, FormView):
     permission_required = ["compras_app.edit_Compra"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_compras.html"
     form_class = forms.CompraEditarForm
     success_url = reverse_lazy("lista_compras")
@@ -54,7 +54,7 @@ class ListaDetalleComprasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["compras_app.view_DetalleCompra"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_detallecompras.html"
     def get_context_data(self, **kwargs):
         id = kwargs.get("id")
@@ -73,7 +73,7 @@ class CrearDetalleComprasView(PermissionRequiredMixin, FormView):
     permission_required = ["compras_app.add_DetalleCompra"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_detallecompras.html"
     form_class = forms.DetalleCompraRegistrarForm
     def get_context_data(self, **kwargs):
@@ -100,7 +100,7 @@ class EditarDetalleComprasView(PermissionRequiredMixin, FormView):
     permission_required = ["compras_app.edit_DetalleCompra"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_detallecompras.html"
     form_class = forms.DetalleCompraEditarForm
     def get_context_data(self, **kwargs):

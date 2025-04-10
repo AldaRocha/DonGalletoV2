@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row align-items-center mb-3">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-6 d-flex justify-content-start">
+                <h1 class="text-left">
+                    Galletas
+                </h1>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-6 d-flex justify-content-end">
+                <div class="btn-group" role="group" aria-label="Unidad de medida">
+                    <a href="?unidad=pz" class="btn btn-outline-primary {% if unidad_actual == 'pz' %}active{% endif %}">
+                        Piezas
+                    </a>
+                    <a href="?unidad=kg" class="btn btn-outline-primary {% if unidad_actual == 'kg' %}active{% endif %}">
+                        Kilogramos
+                    </a>
+                    <a href="?unidad=caja" class="btn btn-outline-primary {% if unidad_actual == 'caja' %}active{% endif %}">
+                        Caja (12)
+                    </a>
+                </div>
+                <a href="{% url 'ver_carrito' %}" class="btn btn-success ms-2">
+                    Ver carrito
+                </a>
+            </div>
+        </div>
+        {% if messages %}
+            <div class="alert-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="row">
+            {% for item in lista %}
+                <div class="d-flex col-lg-4 col-md-4 col-sm-4 col-4 justify-content-center align-items-center mt-2">
+                    <div class="card">
+                        {% if item.produccion__galleta__imagen is not None %}
+                            <img class="card-img-top" src="\media\{{ item.produccion__galleta__imagen }}" alt="Imagen de la galleta">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title text-center">
+                                <strong>
+                                    {{ item.produccion__galleta__nombre }}
+                                </strong>
+                            </h5>
+                            <p class="card-text text-center">
+                                <strong>
+                                    {{ item.produccion__galleta__descripcion }}
+                                </strong>
+                            </p>
+                            <p class="card-text text-center">
+                                <strong>
+                                    Disponibles: {{ item.existencia }} {{ item.unidad }}
+                                </strong>
+                            </p>
+                            <p class="card-text text-center">
+                                <strong>
+                                    &dollar;{{ item.precio_maximo|floatformat:2 }}
+                                </strong>
+                            </p>
+                            <form method="POST" action="{% url 'agregar_al_carrito' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="galleta_nombre" value="{{ item.produccion__galleta__nombre }}">
+                                <input type="hidden" name="precio_maximo" value="{{ item.precio_maximo }}">
+                                <input type="hidden" name="unidad" value="{{ item.unidad }}">
+                                <div class="form-group">
+                                    <label for="cantidad">
+                                        Cantidad:
+                                    </label>
+                                    <input type="number" name="cantidad" min="1" max="{{ item.existencia }}" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    Agregar al carrito
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
