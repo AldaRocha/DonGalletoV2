@@ -1,7 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic.base import TemplateView
 from inventario_galletas_app.models import InventarioGalletas
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Sum, Max
 from django.contrib import messages
 from django.contrib.messages import get_messages
@@ -9,16 +8,17 @@ from django.utils.timezone import now
 from ventas_app.models import Venta, DetalleVenta
 from galletas_app.models import Galleta
 from decimal import Decimal
+from io import BytesIO
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from django.contrib.auth.models import User
 
 # Create your views here.
-class ListaVenderView(PermissionRequiredMixin, TemplateView):
-    permission_required = ["ventas_app.view_Venta"]
-    login_url = "login"
+class ListaVenderView(TemplateView):
     template_name = "venta.html"
-
     def get_context_data(self, **kwargs):
         unidad = self.request.GET.get("unidad", "pz")
-
         lista = (
             InventarioGalletas.objects.filter(cantidad__gt=0)
             .values(
@@ -114,6 +114,7 @@ def procesar_venta(request):
         usuario=request.user
     )
 
+    detalles = []
     for producto_clave, datos in carrito.items():
         galleta_nombre, unidad = producto_clave.rsplit(" (", 1)
         unidad = unidad.rstrip(")")
@@ -125,7 +126,6 @@ def procesar_venta(request):
             continue
 
         cantidad_comprada = datos["cantidad"]
-        print(f"g: {unidad}")
         if unidad == "KG":
             piezas_a_descontar = round(cantidad_comprada * (1000 / galleta.peso_individual))
         elif unidad == "Caja(s) de 12":
@@ -136,17 +136,17 @@ def procesar_venta(request):
         precio = datos["precio_maximo"]
         subtotal = cantidad_comprada * precio
 
-        DetalleVenta.objects.create(
+        detalle = DetalleVenta.objects.create(
             cantidad=cantidad_comprada,
             precio=precio,
             subtotal=subtotal,
             galleta=galleta,
             venta=venta
         )
+        detalles.append(detalle)
 
         inventarios = InventarioGalletas.objects.filter(produccion__galleta=galleta, cantidad__gt=0).order_by("fecha_caducidad")
         faltante = piezas_a_descontar
-        print(faltante)
         for inventario in inventarios:
             if faltante <= 0:
                 break
@@ -163,8 +163,8 @@ def procesar_venta(request):
 
     request.session["carrito"] = {}
 
-    messages.success(request, "La venta se procesó exitosamente.")
-    return redirect("venta")
+    buffer = generar_ticket(venta, detalles)
+    return FileResponse(buffer, as_attachment=True, filename=f"ticket_venta_{venta.id}.pdf")
 
 def eliminar_del_carrito(request, galleta_nombre):
     carrito = request.session.get("carrito", {})
@@ -177,3 +177,88 @@ def eliminar_del_carrito(request, galleta_nombre):
         messages.error(request, "El item no existe en el carrito.")
 
     return redirect("ver_carrito")
+
+def generar_ticket(venta, detalles):
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+    pdf.setTitle(f"Ticket Venta {venta.id}")
+
+    pdf.drawImage("static/image/logo.png", 40, 720, width=120, height=70)
+
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(200, 750, "")
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(40, 690, f"Fecha: {venta.fecha_venta.strftime('%d-%m-%Y %H:%M')}")
+    pdf.drawString(40, 670, f"ID de Venta: {venta.id}")
+    pdf.drawString(40, 650, f"Usuario: {venta.usuario.username}")
+
+    pdf.drawString(40, 620, "Detalles de la Venta:")
+    x = 40
+    y = 600
+    pdf.setFont("Helvetica-Bold", 10)
+    pdf.drawString(x, y, "Producto")
+    pdf.drawString(x + 200, y, "Cantidad")
+    pdf.drawString(x + 300, y, "Precio Unitario")
+    pdf.drawString(x + 400, y, "Subtotal")
+
+    pdf.setFont("Helvetica", 10)
+    y -= 20
+    total_venta = 0
+    for detalle in detalles:
+        pdf.drawString(x, y, detalle.galleta.nombre)
+        pdf.drawString(x + 200, y, f"{detalle.cantidad}")
+        pdf.drawString(x + 300, y, f"${detalle.precio:.2f}")
+        pdf.drawString(x + 400, y, f"${detalle.subtotal:.2f}")
+        total_venta += detalle.subtotal
+        y -= 20
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(40, y - 20, f"Total: ${total_venta:.2f}")
+
+    pdf.save()
+    buffer.seek(0)
+    return buffer
+
+def historial_ventas(request):
+    if request.user.is_superuser:
+        filtro_usuario_id = request.GET.get("usuario")
+        usuarios = User.objects.all()
+
+        if filtro_usuario_id:
+            ventas = Venta.objects.filter(usuario_id=filtro_usuario_id)
+        else:
+            ventas = Venta.objects.all()
+    else:
+        usuarios = None
+        ventas = Venta.objects.filter(usuario=request.user)
+
+    return render(request, "historial_ventas.html", {
+        "ventas": ventas,
+        "usuarios": usuarios,
+        "filtro_usuario_id": filtro_usuario_id if request.user.is_superuser else None
+    })
+
+def ver_detalles_venta(request, venta_id):
+    venta = get_object_or_404(Venta, id=venta_id)
+
+    if not request.user.is_superuser and venta.usuario != request.user:
+        messages.error(request, "No tienes permiso para ver esta venta.")
+        return redirect("historial_ventas")
+
+    detalles = DetalleVenta.objects.filter(venta=venta)
+
+    return render(request, "detalles_venta.html", {
+        "venta": venta,
+        "detalles": detalles
+    })
+
+def descargar_ticket(request, venta_id):
+    venta = get_object_or_404(Venta, id=venta_id)
+    detalles = DetalleVenta.objects.filter(venta=venta)
+
+    if not request.user.is_superuser and venta.usuario != request.user:
+        messages.error(request, "No tienes permiso para descargar este ticket.")
+        return redirect("historial_ventas")
+
+    buffer = generar_ticket(venta, detalles)
+    return FileResponse(buffer, as_attachment=True, filename=f"ticket_venta_{venta.id}.pdf")
