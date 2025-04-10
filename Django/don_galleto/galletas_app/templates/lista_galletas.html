@@ -25,6 +25,12 @@
                                 Peso
                             </th>
                             <th class="text-center">
+                                Precio produccion
+                            </th>
+                            <th class="text-center">
+                                Precio venta
+                            </th>
+                            <th class="text-center">
                                 Imagen
                             </th>
                             <th class="text-center">
@@ -42,6 +48,12 @@
                                     </td>
                                     <td class="text-center">
                                         {{ item.peso_individual }} {{ item.medida }}
+                                    </td>
+                                    <td class="text-center">
+                                        &dollar;{{ item.precio_produccion }}
+                                    </td>
+                                    <td class="text-center">
+                                        &dollar;{{ item.precio_venta }}
                                     </td>
                                     <td class="text-center">
                                         {% if item.imagen.url is not None %}

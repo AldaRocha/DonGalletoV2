@@ -13,7 +13,7 @@ class ListaInventarioInsumosView(PermissionRequiredMixin, TemplateView):
     permission_required = ["inventario_insumos_app.view_InventarioInsumos"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_inventario.html"
     def get_context_data(self, **kwargs):
         hoy = date.today()

@@ -67,7 +67,6 @@ class ProduccionRegistrarForm(forms.ModelForm):
                                     insumotomadomerma = InventarioInsumos
                                     for inventario in existencia:
                                         insumotomadomerma = inventario
-                                        print(insumotomadomerma)
                                         if faltapordescontar > 0:
                                             if inventario.cantidad_existente >=  faltapordescontar:
                                                 inventario.cantidad_existente = inventario.cantidad_existente - faltapordescontar
@@ -82,13 +81,13 @@ class ProduccionRegistrarForm(forms.ModelForm):
                                                 inventario.save()
                                         else:
                                             break
+                                    if faltapordescontar > 0:
+                                        raise ValidationError(f"No tienes el insumo suficiente para producir: {insumoendetalle.insumo}")
                                     Merma.objects.create(
                                         tipo_merma="Produccion",
                                         cantidad=insumoendetalle.merma,
                                         insumo=insumotomadomerma
                                     )
-                                    if faltapordescontar > 0:
-                                        raise ValidationError(f"No tienes el insumo suficiente para producir: {insumoendetalle.insumo}")
                                     solicitud = SolicitudProduccion.objects.filter(galleta_id=galleta.id)
                                     if solicitud is not None:
                                         solicitud.delete()
@@ -110,7 +109,7 @@ class ProduccionRegistrarForm(forms.ModelForm):
                             produccion=instance
                         )
                     InventarioGalletas.objects.create(
-                        precio_por_galleta=5.50,
+                        precio_por_galleta=galleta.precio_venta,
                         cantidad=total-merma,
                         fecha_caducidad=datetime.now() + timedelta(days=3),
                         produccion=instance
