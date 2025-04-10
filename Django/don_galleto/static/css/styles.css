@@ -678,6 +678,15 @@ body {
         font-size: 0.95rem;
     }
 
+    .delete-link {
+        text-decoration: none;
+        margin-left: 0.5rem;
+    }
+    
+    .delete-link i:hover {
+        color: #bd2130 !important;
+    }
+
     @media (max-width: 768px) {
         .edit-container {
             padding: 1rem;
