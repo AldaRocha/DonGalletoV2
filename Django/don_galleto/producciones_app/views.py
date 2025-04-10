@@ -14,7 +14,7 @@ class ListaProduccionesView(PermissionRequiredMixin, TemplateView):
     permission_required = ["producciones_app.view_Produccion"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_producciones.html"
     def get_context_data(self):
         lista = Produccion.objects.all()
@@ -26,7 +26,7 @@ class CrearProduccionesView(PermissionRequiredMixin, FormView):
     permission_required = ["producciones_app.add_Produccion"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_producciones.html"
     form_class = forms.ProduccionRegistrarForm
     success_url = reverse_lazy("lista_producciones")
@@ -47,7 +47,7 @@ class EditarProduccionesView(PermissionRequiredMixin, FormView):
     permission_required = ["producciones_app.edit_Produccion"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_producciones.html"
     form_class = forms.ProduccionEditarForm
     success_url = reverse_lazy("lista_producciones")
@@ -72,7 +72,7 @@ class ListaSolicitudProduccionesView(PermissionRequiredMixin, TemplateView):
     permission_required = ["producciones_app.view_SolicitudProduccion"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_solicitarproducciones.html"
     def get_context_data(self):
         lista = SolicitudProduccion.objects.all()

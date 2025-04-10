@@ -11,7 +11,7 @@ class ListaMedidasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["medidas_app.view_Medida"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_medidas.html"
     def get_context_data(self):
         lista = Medida.objects.all()
@@ -23,7 +23,7 @@ class CrearMedidasView(PermissionRequiredMixin, FormView):
     permission_required = ["medidas_app.add_Medida"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_medidas.html"
     form_class = forms.MedidaRegistrarForm
     success_url = reverse_lazy("lista_medidas")
@@ -35,7 +35,7 @@ class EditarMedidasView(PermissionRequiredMixin, FormView):
     permission_required = ["medidas_app.edit_Medida"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_medidas.html"
     form_class = forms.MedidaEditarForm
     success_url = reverse_lazy("lista_medidas")

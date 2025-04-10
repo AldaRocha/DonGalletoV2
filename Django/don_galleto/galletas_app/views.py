@@ -13,7 +13,7 @@ class ListaGalletasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["galletas_app.view_Galleta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_galletas.html"
     def get_context_data(self):
         lista = Galleta.objects.all()
@@ -25,7 +25,7 @@ class CrearGalletasView(PermissionRequiredMixin, FormView):
     permission_required = ["galletas_app.add_Galleta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_galletas.html"
     form_class = forms.GalletaRegistrarForm
     success_url = reverse_lazy("lista_galletas")
@@ -37,7 +37,7 @@ class EditarGalletasView(PermissionRequiredMixin, FormView):
     permission_required = ["galletas_app.edit_Galleta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_galletas.html"
     form_class = forms.GalletaEditarForm
     success_url = reverse_lazy("lista_galletas")

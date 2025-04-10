@@ -11,7 +11,7 @@ class ListaUsuariosView(PermissionRequiredMixin, TemplateView):
     permission_required = ["usuarios_app.view_User"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_usuarios.html"
     def get_context_data(self):
         lista = User.objects.all()
@@ -23,7 +23,7 @@ class CrearUsuariosView(PermissionRequiredMixin, FormView):
     permission_required = ["usuarios_app.add_User"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_usuarios.html"
     form_class = forms.UsuarioRegistroForm
     success_url = reverse_lazy("lista_usuarios")
@@ -35,7 +35,7 @@ class EditarUsuariosView(PermissionRequiredMixin, FormView):
     permission_required = ["usuarios_app.edit_User"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_usuarios.html"
     form_class = forms.UsuarioEditarForm
     success_url = reverse_lazy("lista_usuarios")

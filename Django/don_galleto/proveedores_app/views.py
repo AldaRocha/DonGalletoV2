@@ -11,7 +11,7 @@ class ListaProveedoresView(PermissionRequiredMixin, TemplateView):
     permission_required = ["proveedores_app.view_Proveedor"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_proveedores.html"
     def get_context_data(self):
         lista = Proveedor.objects.all()
@@ -23,7 +23,7 @@ class CrearProveedoresView(PermissionRequiredMixin, FormView):
     permission_required = ["proveedores_app.add_Proveedor"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_proveedores.html"
     form_class = forms.ProveedorRegistrarForm
     success_url = reverse_lazy("lista_proveedores")
@@ -35,7 +35,7 @@ class EditarProveedoresView(PermissionRequiredMixin, FormView):
     permission_required = ["proveedores_app.edit_Proveedor"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_proveedores.html"
     form_class = forms.ProveedorEditarForm
     success_url = reverse_lazy("lista_proveedores")

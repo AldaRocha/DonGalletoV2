@@ -37,7 +37,7 @@ urlpatterns = [
     path('producciones/', include('producciones_app.urls')),
     path('mermas/', include('mermas_app.urls')),
     path('inventario_galletas/', include('inventario_galletas_app.urls')),
-    #path('ventas/', include('ventas_app.urls'))
+    path('ventas/', include('ventas_app.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 handler404 = views.custom_404
 handler500 = views.custom_500

@@ -12,7 +12,7 @@ class ListaRecetasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["recetas_app.view_Receta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_recetas.html"
     def get_context_data(self):
         lista = Receta.objects.all()
@@ -26,7 +26,7 @@ class CrearRecetasView(PermissionRequiredMixin, FormView):
     permission_required = ["recetas_app.add_Receta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_recetas.html"
     form_class = forms.RecetaRegistrarForm
     success_url = reverse_lazy("lista_recetas")
@@ -42,7 +42,7 @@ class EditarRecetasView(PermissionRequiredMixin, FormView):
     permission_required = ["recetas_app.edit_Receta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_recetas.html"
     form_class = forms.RecetaEditarForm
     success_url = reverse_lazy("lista_recetas")
@@ -64,7 +64,7 @@ class ListaDetalleRecetaView(PermissionRequiredMixin, TemplateView):
     permission_required = ["recetas_app.view_DetalleReceta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_detallereceta.html"
     def get_context_data(self, **kwargs):
         id = kwargs.get("id")
@@ -78,7 +78,7 @@ class CrearDetalleRecetaView(PermissionRequiredMixin, FormView):
     permission_required = ["recetas_app.add_DetalleReceta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_detallereceta.html"
     form_class = forms.DetalleRecetaRegistrarForm
     def get_context_data(self, **kwargs):
@@ -100,7 +100,7 @@ class EditarDetalleRecetaView(PermissionRequiredMixin, FormView):
     permission_required = ["recetas_app.edit_DetalleReceta"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_detallereceta.html"
     form_class = forms.DetalleRecetaEditarForm
     def get_context_data(self, **kwargs):

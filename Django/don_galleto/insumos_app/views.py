@@ -11,7 +11,7 @@ class ListaInsumosView(PermissionRequiredMixin, TemplateView):
     permission_required = ["insumos_app.view_Insumo"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_insumos.html"
     def get_context_data(self):
         lista = Insumo.objects.all()
@@ -23,7 +23,7 @@ class CrearInsumosView(PermissionRequiredMixin, FormView):
     permission_required = ["insumos_app.add_Insumo"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "crear_insumos.html"
     form_class = forms.InsumoRegistrarForm
     success_url = reverse_lazy("lista_insumos")
@@ -35,7 +35,7 @@ class EditarInsumosView(PermissionRequiredMixin, FormView):
     permission_required = ["insumos_app.edit_Insumo"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "editar_insumos.html"
     form_class = forms.InsumoEditarForm
     success_url = reverse_lazy("lista_insumos")

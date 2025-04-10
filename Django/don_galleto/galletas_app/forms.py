@@ -13,11 +13,13 @@ class GalletaRegistrarForm(forms.ModelForm):
     )
     class Meta:
         model = Galleta
-        fields = ["nombre", "descripcion", "peso_individual", "imagen", "medida"]
+        fields = ["nombre", "descripcion", "peso_individual", "precio_produccion", "precio_venta", "imagen", "medida"]
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "descripcion": forms.TextInput(attrs={"class": "form-control"}),
             "peso_individual": forms.NumberInput(attrs={"class": "form-control"}),
+            "precio_produccion": forms.NumberInput(attrs={"class": "form-control"}),
+            "precio_venta": forms.NumberInput(attrs={"class": "form-control"}),
             "imagen": forms.FileInput(attrs={"class": "form-control"})
         }
     def save(self, commit=True):
@@ -41,11 +43,13 @@ class GalletaEditarForm(forms.ModelForm):
     )
     class Meta:
         model = Galleta
-        fields = ["nombre", "descripcion", "peso_individual", "imagen", "medida"]
+        fields = ["nombre", "descripcion", "peso_individual", "precio_produccion", "precio_venta", "imagen", "medida"]
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "descripcion": forms.TextInput(attrs={"class": "form-control"}),
             "peso_individual": forms.NumberInput(attrs={"class": "form-control"}),
+            "precio_produccion": forms.NumberInput(attrs={"class": "form-control"}),
+            "precio_venta": forms.NumberInput(attrs={"class": "form-control"}),
             "imagen": forms.FileInput(attrs={"class": "form-control"})
         }
     def save(self, id):
@@ -53,6 +57,8 @@ class GalletaEditarForm(forms.ModelForm):
         item.nombre = self.cleaned_data["nombre"]
         item.descripcion = self.cleaned_data["descripcion"]
         item.peso_individual = self.cleaned_data["peso_individual"]
+        item.precio_produccion = self.cleaned_data["precio_produccion"]
+        item.precio_venta = self.cleaned_data["precio_venta"]
         if self.cleaned_data.get("imagen"):
             item.imagen = self.cleaned_data["imagen"]
         item.medida = self.cleaned_data["medida"]

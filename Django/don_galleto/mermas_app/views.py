@@ -9,7 +9,7 @@ class ListaMermasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["mermas_app.view_Merma"]
     login_url = "login"
     def handle_no_permission(self):
-        return redirect("home")
+        return redirect("venta")
     template_name = "lista_mermas.html"
     def get_context_data(self):
         lista = Merma.objects.all()
