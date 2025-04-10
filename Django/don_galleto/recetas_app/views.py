@@ -11,16 +11,16 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 class ListaRecetasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["recetas_app.view_Receta"]
     login_url = "login"
+
     def handle_no_permission(self):
         return redirect("venta")
+
     template_name = "lista_recetas.html"
-    def get_context_data(self):
-        lista = Receta.objects.all()
-        for receta in lista:
-            receta.para_produccion = "Si" if receta.para_produccion else "No"
-        return {
-            "lista": lista
-        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["lista"] = Receta.objects.all()
+        return context
 
 class CrearRecetasView(PermissionRequiredMixin, FormView):
     permission_required = ["recetas_app.add_Receta"]

@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic.base import TemplateView
 from inventario_galletas_app.models import InventarioGalletas
-from django.db.models import Sum, Max
+from django.db.models import Sum, Max, F
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.utils.timezone import now
@@ -232,10 +232,18 @@ def historial_ventas(request):
         usuarios = None
         ventas = Venta.objects.filter(usuario=request.user)
 
+    # Calcular totales
+    total_ventas = ventas.aggregate(total=Sum(F('detalleventa__cantidad') * F('detalleventa__precio')))['total'] or 0
+    total_pedidos = ventas.count()
+    total_galletas = ventas.aggregate(total=Sum('detalleventa__cantidad'))['total'] or 0
+
     return render(request, "historial_ventas.html", {
         "ventas": ventas,
         "usuarios": usuarios,
-        "filtro_usuario_id": filtro_usuario_id if request.user.is_superuser else None
+        "filtro_usuario_id": filtro_usuario_id if request.user.is_superuser else None,
+        "total_ventas": total_ventas,
+        "total_pedidos": total_pedidos,
+        "total_galletas": total_galletas,
     })
 
 def ver_detalles_venta(request, venta_id):

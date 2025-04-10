@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from . import forms
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_http_methods
 
 # Create your views here.
 class ListaUsuariosView(PermissionRequiredMixin, TemplateView):
@@ -48,3 +51,24 @@ class EditarUsuariosView(PermissionRequiredMixin, FormView):
     def form_valid(self, form):
         form.save(self.kwargs.get("id"))
         return super().form_valid(form)
+    
+@require_http_methods(["GET"])
+def check_availability(request):
+    """
+    Vista para verificar si un username o email ya existe en la base de datos
+    """
+    field = request.GET.get('field')
+    value = request.GET.get('value')
+    User = get_user_model()
+    
+    if not field or not value:
+        return JsonResponse({'error': 'Faltan parámetros'}, status=400)
+    
+    if field == 'username':
+        exists = User.objects.filter(username=value).exists()
+    elif field == 'email':
+        exists = User.objects.filter(email=value).exists()
+    else:
+        return JsonResponse({'error': 'Campo no válido'}, status=400)
+        
+    return JsonResponse({'exists': exists})

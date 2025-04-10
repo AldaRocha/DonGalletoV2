@@ -1,10 +1,179 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <div class="pantalla-completa">
-    
+<div class="dashboard-container">
+    <!-- Sección de Ventas -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i>
+                Reporte de Ventas
+            </h2>
+            <form class="period-selector" method="GET">
+                <div class="date-inputs">
+                    <div class="form-group">
+                        <label for="fecha_inicio">Desde:</label>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio" 
+                            value="{{ fecha_inicio|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_fin">Hasta:</label>
+                        <input type="date" id="fecha_fin" name="fecha_fin" 
+                            value="{{ fecha_fin|date:'Y-m-d' }}" required>
+                    </div>
+                </div>
+                <button type="submit" class="action-button">
+                    <i class="fas fa-filter"></i> Filtrar
+                </button>
+            </form>
+        </div>
+
+        <div class="sales-grid">
+            <div class="sales-card">
+                <div class="sales-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="sales-info">
+                    <h3>Ventas Totales</h3>
+                    <p class="sales-amount">${{ total_ventas|floatformat:2 }}</p>
+                </div>
+            </div>
+            <div class="sales-card">
+                <div class="sales-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="sales-info">
+                    <h3>Total de Pedidos</h3>
+                    <p class="sales-amount">{{ total_pedidos }}</p>
+                </div>
+            </div>
+            <div class="sales-card">
+                <div class="sales-icon">
+                    <i class="fas fa-cookie-bite"></i>
+                </div>
+                <div class="sales-info">
+                    <h3>Galletas Vendidas</h3>
+                    <p class="sales-amount">{{ total_galletas }}</p>
+                </div>
+            </div>
+        </div>
+
+        {% if ventas_por_galleta %}
+        <div class="sales-table-container">
+            <h3>Ventas por Tipo de Galleta</h3>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Galleta</th>
+                        <th>Cantidad Vendida</th>
+                        <th>Total Ventas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ventas_por_galleta %}
+                    <tr>
+                        <td>{{ venta.galleta__nombre }}</td>
+                        <td>{{ venta.cantidad_total }}</td>
+                        <td>${{ venta.total_ventas|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
     </div>
-</form>
+
+    <!-- Sección de Producción de Galletas -->
+    <div class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-calculator"></i>
+            Costos de Producción
+        </h2>
+        <div class="costs-grid">
+            {% for galleta in galletas %}
+            <div class="cost-card">
+                <div class="cost-card-header">
+                    {% if galleta.imagen %}
+                        <img src="{{ galleta.imagen.url }}" alt="{{ galleta.nombre }}" class="galleta-imagen">
+                    {% else %}
+                        <div class="no-imagen">
+                            <i class="fa-solid fa-cookie"></i>
+                        </div>
+                    {% endif %}
+                    <h3>{{ galleta.nombre }}</h3>
+                </div>
+                <div class="cost-details">
+                    <div class="cost-item">
+                        <span class="cost-label">Costo por unidad:</span>
+                        <span class="cost-value">${{ galleta.costo_actual|floatformat:2 }}</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-label">Total insumos:</span>
+                        <span class="cost-value">{{ galleta.total_insumos }}</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-label">Última actualización:</span>
+                        <span class="cost-date">{{ galleta.ultima_actualizacion|date:"d/m/Y" }}</span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-cookie-bite"></i>
+                <p>No hay galletas registradas en el sistema</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Nueva Sección de Recomendaciones por Producción -->
+    <div class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-history"></i>
+            Recomendaciones para vender cuanto antes
+        </h2>
+        <div class="recommendations-grid">
+            {% for item in galletas_por_produccion %}
+            <div class="recommendation-card {% if item.es_urgente %}urgent{% elif forloop.first %}oldest{% endif %}">
+                <div class="recommendation-header">
+                    {% if item.produccion.galleta.imagen %}
+                        <img src="{{ item.produccion.galleta.imagen.url }}" alt="{{ item.produccion.galleta.nombre }}" class="galleta-imagen">
+                    {% else %}
+                        <div class="no-imagen">
+                            <i class="fa-solid fa-cookie"></i>
+                        </div>
+                    {% endif %}
+                    <div class="recommendation-info">
+                        <h3>{{ item.produccion.galleta.nombre }}</h3>
+                        <span class="lote {% if item.es_urgente %}highlight-red{% endif %}">
+                            Lote: {{ item.produccion.id }}
+                        </span>
+                    </div>
+                </div>
+                <div class="recommendation-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Producido:</span>
+                        <span class="detail-value {% if item.es_urgente %}highlight-red{% endif %}">
+                            {{ item.produccion.fecha_preparacion|date:"d/m/Y H:i" }}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Existencia:</span>
+                        <span class="detail-value">{{ item.cantidad }} unidades</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Precio sugerido:</span>
+                        <span class="detail-value">${{ item.precio_por_galleta|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <p>No hay galletas en inventario</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock content %}

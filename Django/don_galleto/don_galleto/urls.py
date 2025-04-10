@@ -20,12 +20,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 from . import views
+from usuarios_app.views import check_availability
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('cuentas/', include('django.contrib.auth.urls')),
     path('cuentas/registro', views.registro, name="registro"),
-    path('home', login_required(views.home.as_view()), name='home'),
+    path('home', login_required(views.home), name='home'),
     path('usuarios/', include('usuarios_app.urls')),
     path('proveedores/', include('proveedores_app.urls')),
     path('medidas/', include('medidas_app.urls')),
@@ -37,6 +38,7 @@ urlpatterns = [
     path('producciones/', include('producciones_app.urls')),
     path('mermas/', include('mermas_app.urls')),
     path('inventario_galletas/', include('inventario_galletas_app.urls')),
+    path('check-availability/', check_availability, name='check_availability'),
     path('ventas/', include('ventas_app.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 handler404 = views.custom_404

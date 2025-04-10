@@ -1,75 +1,66 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <div class="container mt-4">
-        <h1 class="text-center">
-            Historial de Ventas
-        </h1>
-        {% if user.is_superuser %}
-            <div class="row mb-3">
-                <div class="col-12">
-                    <form method="GET" action="{% url 'filtrar_historial' %}">
-                        <label for="usuario" class="form-label">
-                            Filtrar por usuario:
-                        </label>
-                        <select id="usuario" name="usuario" class="form-select">
-                            <option value="">Todos los usuarios</option>
-                            {% for usuario in usuarios %}
-                                <option value="{{ usuario.id }}" {% if usuario.id == filtro_usuario_id %}selected{% endif %}>
-                                    {{ usuario.username }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn-primary mt-2">Filtrar</button>
-                    </form>
-                </div>
+<div class="historial-container">
+    <div class="page-header">
+        <h1><i class="fas fa-history"></i> Historial de Ventas</h1>
+    </div>
+
+    {% if user.is_superuser %}
+    <div class="filter-container">
+        <form method="GET" action="{% url 'filtrar_historial' %}" class="filter-form">
+            <div class="form-group">
+                <label for="usuario" class="filter-label">Filtrar por usuario:</label>
+                <select id="usuario" name="usuario" class="filter-select">
+                    <option value="">Todos los usuarios</option>
+                    {% for usuario in usuarios %}
+                    <option value="{{ usuario.id }}" {% if usuario.id == filtro_usuario_id %}selected{% endif %}>
+                        {{ usuario.username }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
-        {% endif %}
-        <table class="table table-hover table-striped">
+            <button type="submit" class="filter-button">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="table-container">
+        <table class="custom-table">
             <thead>
                 <tr>
-                    <th>
-                        Venta
-                    </th>
-                    <th>
-                        Fecha de Venta
-                    </th>
-                    <th>
-                        Usuario
-                    </th>
-                    <th>
-                        Acciones
-                    </th>
+                    <th>Venta</th>
+                    <th>Fecha de Venta</th>
+                    <th>Usuario</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for venta in ventas %}
-                    <tr>
-                        <td>
-                            {{ venta.id }}
-                        </td>
-                        <td>
-                            {{ venta.fecha_venta|date:"d-m-Y H:i" }}
-                        </td>
-                        <td>
-                            {{ venta.usuario.username }}
-                        </td>
-                        <td>
-                            <a href="{% url 'ver_detalles_venta' venta.id %}" class="btn btn-info btn-sm">
-                                Ver detalles
-                            </a>
-                            <a href="{% url 'descargar_ticket' venta.id %}" class="btn btn-success btn-sm">
-                                Descargar ticket
-                            </a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{ venta.id }}</td>
+                    <td>{{ venta.fecha_venta|date:"d-m-Y H:i" }}</td>
+                    <td>{{ venta.usuario.username }}</td>
+                    <td class="action-buttons">
+                        <a href="{% url 'ver_detalles_venta' venta.id %}" class="action-button view-button">
+                            <i class="fas fa-eye"></i> Ver detalles
+                        </a>
+                        <a href="{% url 'descargar_ticket' venta.id %}" class="action-button download-button">
+                            <i class="fas fa-download"></i> Descargar ticket
+                        </a>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
         {% if not ventas %}
-            <p class="text-center text-muted">
-                No se encontraron ventas.
-            </p>
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>No se encontraron ventas.</p>
+        </div>
         {% endif %}
     </div>
+</div>
 {% endblock content %}

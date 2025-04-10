@@ -1,75 +1,59 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <h1 class="text-center">
-        Carrito de Compras
-    </h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Nombre de la Galleta
-                </th>
-                <th>
-                    Cantidad
-                </th>
-                <th>
-                    Unidad
-                </th>
-                <th>
-                    Precio Unitario
-                </th>
-                <th>
-                    Subtotal
-                </th>
-                <th>
-                    Acciones
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in carrito %}
+<div class="users-container">
+    <div class="page-header">
+        <h1><i class="fas fa-shopping-cart"></i> Carrito de Compras</h1>
+    </div>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
                 <tr>
-                    <td>
-                        {{ item.nombre }}
-                    </td>
-                    <td>
-                        {{ item.cantidad }}
-                    </td>
-                    <td>
-                        {{ item.unidad }}
-                    </td>
-                    <td>
-                        &dollar;{{ item.precio_maximo|floatformat:2 }}
-                    </td>
-                    <td>
-                        &dollar;{{ item.total|floatformat:2 }}
-                    </td>
+                    <th>Nombre de la Galleta</th>
+                    <th>Cantidad</th>
+                    <th>Unidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in carrito %}
+                <tr>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>{{ item.unidad }}</td>
+                    <td>${{ item.precio_maximo|floatformat:2 }}</td>
+                    <td>${{ item.total|floatformat:2 }}</td>
                     <td>
                         <form method="POST" action="{% url 'eliminar_del_carrito' item.nombre %}">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            <button type="submit" class="login-button-danger">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
                         </form>
                     </td>
                 </tr>
-            {% endfor %}
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    Total:
-                </td>
-                <td>
-                    &dollar;{{ total|floatformat:2 }}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <a href="{% url 'procesar_venta' %}" class="btn btn-success">
-        Confirmar venta
-    </a>
-    <a href="{% url 'venta' %}" class="btn btn-danger">
-        Regresar
-    </a>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-right"><strong>Total:</strong></td>
+                    <td><strong>${{ total|floatformat:2 }}</strong></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="form-actions">
+        <a href="{% url 'venta' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Regresar
+        </a>
+        <a href="{% url 'procesar_venta' %}" class="action-button">
+            <i class="fas fa-check"></i> Confirmar venta
+        </a>
+    </div>
+</div>
 {% endblock content %}
