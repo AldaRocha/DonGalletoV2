@@ -173,6 +173,14 @@
                     </span>
                 </a>
             {% endif %}
+            {% if grupo.name == 'Administrador' or 'Cliente' %}
+                <a href="{% url 'filtrar_historial' %}" class="{% if request.resolver_match.url_name == '#' %}active{% endif %}">
+                    <i class="fa-solid fa-cash-register"></i>
+                    <span>
+                        Historial
+                    </span>
+                </a>
+            {% endif %}
         {% endfor %}
     </div>
 
