@@ -17,6 +17,8 @@ class ListaGalletasView(PermissionRequiredMixin, TemplateView):
     template_name = "lista_galletas.html"
     def get_context_data(self):
         lista = Galleta.objects.all()
+        for galleta in lista:
+            galleta.peso_individual = int(galleta.peso_individual)
         return {
             "lista": lista
         }
@@ -55,7 +57,7 @@ def SolicitarGalletasView(request, pk):
     if request.method == "POST":
         galleta = get_object_or_404(Galleta, pk=pk)
         solicitud = SolicitudProduccion.objects.filter(galleta_id=galleta.id)
-        if solicitud is not None:
+        if solicitud.exists():
             messages.error(request, "Ya hay una solicitud de esta galleta")
             return redirect(reverse_lazy("lista_galletas"))
         else:

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="text-center">
+            Detalles de la Venta
+        </h1>
+        <p>
+            <strong>
+                Venta:
+            </strong>
+            &nbsp;
+            {{ venta.id }}
+        </p>
+        <p>
+            <strong>
+                Fecha:
+            </strong>
+            &nbsp;
+            {{ venta.fecha_venta|date:"d-m-Y H:i" }}
+        </p>
+        <p>
+            <strong>
+                Usuario:
+            </strong>
+            &nbsp;
+            {{ venta.usuario.username }}
+        </p>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        Producto
+                    </th>
+                    <th>
+                        Cantidad
+                    </th>
+                    <th>
+                        Precio Unitario
+                    </th>
+                    <th>
+                        Subtotal
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in detalles %}
+                    <tr>
+                        <td>
+                            {{ detalle.galleta.nombre }}
+                        </td>
+                        <td>
+                            {{ detalle.cantidad }}
+                        </td>
+                        <td>
+                            &dollar;{{ detalle.precio|floatformat:2 }}
+                        </td>
+                        <td>
+                            &dollar;{{ detalle.subtotal|floatformat:2 }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a class="btn btn-danger" href="{% url "filtrar_historial" %}">
+        Regresar
+    </a>
+{% endblock content %}
