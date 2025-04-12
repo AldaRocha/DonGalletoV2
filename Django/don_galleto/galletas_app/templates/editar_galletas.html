@@ -22,6 +22,9 @@
                     <div class="form-group">
                         {{ form.precio_produccion.label_tag }}
                         {{ form.precio_produccion }}
+                        <small class="form-text text-muted">
+                            Este precio se calcula automáticamente basado en la receta activa para producción ({{ form.instance.precio_produccion_actual|stringformat:".2f" }})
+                        </small>
                     </div>
                 </div>
                 <div class="form-column">

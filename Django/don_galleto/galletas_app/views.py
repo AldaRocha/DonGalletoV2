@@ -7,21 +7,20 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from producciones_app.models import SolicitudProduccion
 from django.contrib import messages
+from decimal import Decimal, ROUND_HALF_UP
+from django.views.generic import UpdateView
 
 # Create your views here.
 class ListaGalletasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["galletas_app.view_Galleta"]
     login_url = "login"
-    def handle_no_permission(self):
-        return redirect("venta")
     template_name = "lista_galletas.html"
-    def get_context_data(self):
-        lista = Galleta.objects.all()
-        for galleta in lista:
-            galleta.peso_individual = int(galleta.peso_individual)
-        return {
-            "lista": lista
-        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        galletas = Galleta.objects.all().prefetch_related('receta_set')
+        context['lista'] = galletas
+        return context
 
 class CrearGalletasView(PermissionRequiredMixin, FormView):
     permission_required = ["galletas_app.add_Galleta"]
@@ -35,23 +34,28 @@ class CrearGalletasView(PermissionRequiredMixin, FormView):
         form.save()
         return super().form_valid(form)
 
-class EditarGalletasView(PermissionRequiredMixin, FormView):
-    permission_required = ["galletas_app.edit_Galleta"]
+class EditarGalletasView(PermissionRequiredMixin, UpdateView):
+    permission_required = ["galletas_app.change_galleta"]  # Nota: cambié edit_Galleta a change_galleta
+    model = Galleta
     login_url = "login"
-    def handle_no_permission(self):
-        return redirect("venta")
     template_name = "editar_galletas.html"
     form_class = forms.GalletaEditarForm
     success_url = reverse_lazy("lista_galletas")
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        id = self.kwargs.get("id")
-        galleta = get_object_or_404(Galleta, id=id)
-        kwargs["instance"] = galleta
-        return kwargs
+    pk_url_kwarg = 'id'  # Para que coincida con el parámetro que estás usando en la URL
+
     def form_valid(self, form):
-        form.save(self.kwargs.get("id"))
-        return super().form_valid(form)
+        # Guardar el formulario
+        response = super().form_valid(form)
+        
+        # Actualizar el precio de producción
+        self.object.precio_produccion = Decimal(str(self.object.precio_produccion_actual)).quantize(
+            Decimal('0.01'), 
+            rounding=ROUND_HALF_UP
+        )
+        self.object.save()
+        
+        messages.success(self.request, "Galleta actualizada exitosamente")
+        return response
 
 def SolicitarGalletasView(request, pk):
     if request.method == "POST":

@@ -120,14 +120,14 @@
         {% endif %}
         
         {% if grupo.name == 'Administrador' %}
-            <a href="{% url 'lista_solicitarproducciones' %}" class="{% if '/solicitar_producciones/' in request.path %}active{% endif %}">
+            <a href="{% url 'lista_solicitarproducciones' %}" class="{% if request.resolver_match.url_name == 'lista_solicitarproducciones' %}active{% endif %}">
                 <i class="fa-solid fa-clock"></i>
                 <span>Solicitud Producción</span>
             </a>
         {% endif %}
         
         {% if grupo.name == 'Administrador' %}
-            <a href="{% url 'lista_producciones' %}" class="{% if '/producciones/' in request.path %}active{% endif %}">
+            <a href="{% url 'lista_producciones' %}" class="{% if request.resolver_match.url_name == 'lista_producciones' %}active{% endif %}">
                 <i class="fa-solid fa-kitchen-set"></i>
                 <span>Producción</span>
             </a>

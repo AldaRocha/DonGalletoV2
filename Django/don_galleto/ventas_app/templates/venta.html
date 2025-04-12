@@ -16,7 +16,7 @@
                     Caja (12)
                 </a>
             </div>
-            <a href="{% url 'ver_carrito' %}" class="action-button">
+            <a href="{% url 'ver_carrito' %}" class="action-button-cart">
                 <i class="fas fa-shopping-cart"></i> Ver carrito
             </a>
         </div>
@@ -32,47 +32,57 @@
     </div>
     {% endif %}
 
-    <div class="galletas-grid">
-        {% for item in lista %}
-        <div class="galleta-card venta-card">
-            <div class="galleta-imagen">
-                {% if item.produccion__galleta__imagen %}
-                    <img src="/media/{{ item.produccion__galleta__imagen }}" alt="{{ item.produccion__galleta__nombre }}">
-                {% else %}
-                    <div class="no-imagen">
-                        <i class="fa-solid fa-cookie"></i>
-                    </div>
-                {% endif %}
-            </div>
-            <div class="galleta-info">
-                <h3>{{ item.produccion__galleta__nombre }}</h3>
-                <p class="descripcion">{{ item.produccion__galleta__descripcion }}</p>
-                <div class="venta-details">
-                    <p class="existencia">
-                        <i class="fas fa-box"></i>
-                        Disponibles: {{ item.existencia }} {{ item.unidad }}
-                    </p>
-                    <p class="precio">
-                        <i class="fas fa-tag"></i>
-                        ${{ item.precio_maximo|floatformat:2 }}
-                    </p>
+    {% if lista %}
+        <div class="galletas-grid">
+            {% for item in lista %}
+            <div class="galleta-card venta-card">
+                <div class="galleta-imagen">
+                    {% if item.produccion__galleta__imagen %}
+                        <img src="/media/{{ item.produccion__galleta__imagen }}" alt="{{ item.produccion__galleta__nombre }}">
+                    {% else %}
+                        <div class="no-imagen">
+                            <i class="fa-solid fa-cookie"></i>
+                        </div>
+                    {% endif %}
                 </div>
-                <form method="POST" action="{% url 'agregar_al_carrito' %}" class="venta-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="galleta_nombre" value="{{ item.produccion__galleta__nombre }}">
-                    <input type="hidden" name="precio_maximo" value="{{ item.precio_maximo }}">
-                    <input type="hidden" name="unidad" value="{{ item.unidad }}">
-                    <div class="cantidad-group">
-                        <label for="cantidad">Cantidad:</label>
-                        <input type="number" name="cantidad" min="1" max="{{ item.existencia }}" required>
+                <div class="galleta-info">
+                    <h3>{{ item.produccion__galleta__nombre }}</h3>
+                    <p class="descripcion">{{ item.produccion__galleta__descripcion }}</p>
+                    <div class="venta-details">
+                        <p class="existencia">
+                            <i class="fas fa-box"></i>
+                            Disponibles: {{ item.existencia }} {{ item.unidad }}
+                        </p>
+                        <p class="precio">
+                            <i class="fas fa-tag"></i>
+                            ${{ item.precio_maximo|floatformat:2 }}
+                        </p>
                     </div>
-                    <button type="submit" class="action-button">
-                        <i class="fas fa-cart-plus"></i> Agregar al carrito
-                    </button>
-                </form>
+                    <form method="POST" action="{% url 'agregar_al_carrito' %}" class="venta-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="galleta_nombre" value="{{ item.produccion__galleta__nombre }}">
+                        <input type="hidden" name="precio_maximo" value="{{ item.precio_para_carrito }}">
+                        <input type="hidden" name="unidad" value="{{ item.unidad }}">
+                        <div class="cantidad-group">
+                            <label for="cantidad">Cantidad:</label>
+                            <input type="number" name="cantidad" min="1" max="{{ item.existencia }}" required>
+                        </div>
+                        <button type="submit" class="action-button-cart" style="font-size: 1rem;">
+                            <i class="fas fa-cart-plus"></i> Agregar al carrito
+                        </button>
+                    </form>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fa-solid fa-cookie-bite"></i>
+            </div>
+            <h2 class="empty-state-title">No hay galletas disponibles</h2>
+            <p class="empty-state-description">En este momento no hay galletas disponibles para venta.</p>
+        </div>
+    {% endif %}
 </div>
 {% endblock content %}

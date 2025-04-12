@@ -6,6 +6,7 @@
         <h1><i class="fa-solid fa-clock"></i> Solicitar producción</h1>
     </div>
 
+    {% if lista %}
     <div class="table-container">
         <table class="custom-table">
             <thead>
@@ -39,5 +40,14 @@
             </tbody>
         </table>
     </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fa-solid fa-cookie-bite"></i>
+            </div>
+            <h2 class="empty-state-title">No hay solicitudes de producción</h2>
+            <p class="empty-state-description">Solicita producción desde el módulo "Galletas".</p>
+        </div>
+    {% endif %}
 </div>
 {% endblock content %}

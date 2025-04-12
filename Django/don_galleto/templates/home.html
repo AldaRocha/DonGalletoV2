@@ -83,11 +83,10 @@
         {% endif %}
     </div>
 
-    <!-- Sección de Producción de Galletas -->
     <div class="dashboard-section">
         <h2 class="section-title">
             <i class="fas fa-calculator"></i>
-            Costos de Producción
+            Costos de Producción ({{ galletas.count }} galletas)
         </h2>
         <div class="costs-grid">
             {% for galleta in galletas %}
@@ -105,15 +104,23 @@
                 <div class="cost-details">
                     <div class="cost-item">
                         <span class="cost-label">Costo por unidad:</span>
-                        <span class="cost-value">${{ galleta.costo_actual|floatformat:2 }}</span>
+                        <span class="cost-value">
+                            {% if galleta.precio_produccion_actual %}
+                                ${{ galleta.precio_produccion_actual|floatformat:2 }}
+                            {% else %}
+                                No disponible
+                            {% endif %}
+                        </span>
                     </div>
                     <div class="cost-item">
-                        <span class="cost-label">Total insumos:</span>
-                        <span class="cost-value">{{ galleta.total_insumos }}</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-label">Última actualización:</span>
-                        <span class="cost-date">{{ galleta.ultima_actualizacion|date:"d/m/Y" }}</span>
+                        <span class="cost-label">Precio venta:</span>
+                        <span class="price-value">
+                            {% if galleta.precio_venta %}
+                                ${{ galleta.precio_venta|floatformat:2 }}
+                            {% else %}
+                                No disponible
+                            {% endif %}
+                        </span>
                     </div>
                 </div>
             </div>

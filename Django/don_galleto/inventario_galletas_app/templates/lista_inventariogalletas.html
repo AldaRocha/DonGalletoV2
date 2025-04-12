@@ -6,6 +6,7 @@
         <h1><i class="fa-solid fa-cookie-bite"></i> Inventario Galletas</h1>
     </div>
 
+    {% if lista %}
     <div class="table-container">
         <table class="custom-table">
             <thead>
@@ -14,7 +15,7 @@
                     <th>Lote producción</th>
                     <th>Vencimiento</th>
                     <th>Cantidad existente</th>
-                    <th>Precio unitario producción</th>
+                    <th>Precio unitario venta</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -38,6 +39,15 @@
             </tbody>
         </table>
     </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fa-solid fa-cookie-bite"></i>
+        </div>
+        <h2 class="empty-state-title">No hay galletas en inventario</h2>
+        <p class="empty-state-description">Actualmente no hay galletas registradas en el inventario.</p>
+    </div>
+    {% endif %}
 
     {% comment %} <div class="form-actions">
         <a href="{% url 'home' %}" class="back-button">

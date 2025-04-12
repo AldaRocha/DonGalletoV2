@@ -153,7 +153,7 @@ button {
 .content {
     margin-left: 250px;
     margin-top: 80px;
-    padding: 2rem;
+    padding: 0 2rem 2rem 2rem;
     transition: margin-left 0.3s ease;
 }
 
@@ -529,6 +529,7 @@ button {
 
 /* Buttons */
 .action-button,
+.action-button-cart,
 .back-button,
 .edit-button {
     padding: 0.75rem 1.5rem;
@@ -540,6 +541,16 @@ button {
 .action-button {
     background-color: var(--primary-color);
     color: var(--white);
+}
+
+.action-button-cart {
+    background-color: rgb(79, 157, 245);
+    color: var(--white);
+}
+
+.action-button-cart:hover {
+    background-color: rgb(30, 107, 196);
+    transform: translateY(-2px);
 }
 
 .back-button {
@@ -2348,4 +2359,42 @@ button {
 .back-button:hover {
     background-color: var(--danger-dark);
     transform: translateY(-2px);
+}
+
+.table-summary {
+    background-color: #f8f9fa;
+}
+
+.table-summary td {
+    padding: 10px;
+}
+
+.text-end {
+    text-align: right;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.empty-state-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.empty-state-description {
+    font-size: 16px;
+    color: #666;
 }

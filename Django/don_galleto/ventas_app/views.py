@@ -13,6 +13,8 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from django.contrib.auth.models import User
+from django.db import transaction
+from decimal import Decimal, InvalidOperation, DecimalException 
 
 # Create your views here.
 class ListaVenderView(TemplateView):
@@ -35,19 +37,25 @@ class ListaVenderView(TemplateView):
         )
 
         for item in lista:
+            # Guarda siempre el precio original por pieza
+            precio_original = item["precio_maximo"]
+            
             if unidad == "kg":
                 peso_kg = Decimal(item["produccion__galleta__peso_individual"]) / Decimal(1000)
                 item["existencia"] = round(Decimal(item["total_cantidad"]) * peso_kg, 2)
-                item["precio_maximo"] = item["precio_maximo"] * round(1000 / item["produccion__galleta__peso_individual"], 2)
+                item["precio_maximo"] = precio_original * round(1000 / item["produccion__galleta__peso_individual"], 2)
                 item["unidad"] = "KG"
             elif unidad == "caja":
                 item["existencia"] = item["total_cantidad"] // 12
-                item["precio_maximo"] = item["precio_maximo"] * 12
+                item["precio_maximo"] = precio_original * 12
                 item["unidad"] = "Caja(s) de 12"
             else:
                 item["existencia"] = item["total_cantidad"]
-                item["precio_maximo"] = item["precio_maximo"]
+                item["precio_maximo"] = precio_original
                 item["unidad"] = "PZ"
+                
+            # Este precio siempre será el que aparece en pantalla y usamos en el carrito
+            item["precio_para_carrito"] = item["precio_maximo"]
 
         return {
             "lista": lista,
@@ -56,127 +64,218 @@ class ListaVenderView(TemplateView):
 
 def agregar_al_carrito(request):
     if request.method == "POST":
-        storage = get_messages(request)
-        for _ in storage:
-            pass
+        try:
+            with transaction.atomic():
+                galleta_nombre = request.POST.get("galleta_nombre")
+                cantidad = int(request.POST.get("cantidad"))
+                unidad = request.POST.get("unidad")
+                
+                # En lugar de obtener precio del POST, obtenerlo directamente de la base de datos
+                # para evitar todos los problemas de formato
+                
+                # Buscar la galleta en el inventario
+                inventario = InventarioGalletas.objects.filter(
+                    produccion__galleta__nombre=galleta_nombre,
+                    cantidad__gt=0
+                ).order_by('produccion__fecha_preparacion').first()
 
-        galleta_nombre = request.POST.get("galleta_nombre")
-        cantidad = int(request.POST.get("cantidad"))
-        unidad = request.POST.get("unidad")
+                if not inventario or inventario.cantidad < cantidad:
+                    messages.error(request, "No hay suficiente stock disponible")
+                    return redirect('venta')
+                
+                # Obtener el precio directamente de la base de datos
+                galleta = inventario.produccion.galleta
+                precio_base = inventario.precio_por_galleta
+                
+                # Ajustar precio según unidad
+                if unidad == "KG":
+                    precio_unitario = precio_base * (1000 / galleta.peso_individual)
+                elif unidad == "Caja(s) de 12":
+                    precio_unitario = precio_base * 12
+                else:
+                    precio_unitario = precio_base
+                
+                # Actualizar inventario
+                inventario.cantidad = F('cantidad') - cantidad
+                inventario.save()
+                inventario.refresh_from_db()
 
-        precio_maximo_raw = request.POST.get("precio_maximo")
-        precio_maximo = float(precio_maximo_raw.replace(",", "."))
+                # Calcular total
+                total = precio_unitario * Decimal(str(cantidad))
 
-        carrito = request.session.get("carrito", {})
+                # Preparar carrito
+                carrito = request.session.get('carrito', [])
+                if not isinstance(carrito, list):
+                    carrito = []
 
-        producto_clave = f"{galleta_nombre} ({unidad})"
+                carrito.append({
+                    'galleta': galleta_nombre,
+                    'cantidad': cantidad,
+                    'precio': str(precio_unitario),
+                    'unidad': unidad,
+                    'total': str(total),
+                    'inventario_id': inventario.id
+                })
+                request.session['carrito'] = carrito
+                messages.success(request, "Producto agregado al carrito")
+                return redirect('venta')
 
-        if producto_clave in carrito:
-            carrito[producto_clave]["cantidad"] += cantidad
-        else:
-            carrito[producto_clave] = {
-                "cantidad": cantidad,
-                "precio_maximo": precio_maximo,
-                "unidad": unidad
-            }
-
-        request.session["carrito"] = carrito
-        messages.success(request, f"{cantidad} unidad(es) de {producto_clave} agregadas al carrito.")
-        return redirect("venta")
-
+        except ValueError as ve:
+            messages.error(request, str(ve))
+            return redirect('venta')
+        except Exception as e:
+            messages.error(request, f"Error al agregar al carrito: {str(e)}")
+            return redirect('venta')
+        
 def ver_carrito(request):
-    carrito = request.session.get("carrito", {})
+    carrito = request.session.get("carrito", [])
     carrito_con_totales = []
+    total_venta = Decimal('0.00')
 
-    total_venta = 0.00
-    for producto_clave, datos in carrito.items():
-        total = datos["cantidad"] * datos["precio_maximo"]
+    for item in carrito:
+        precio = Decimal(item['precio'])  # Usar el precio tal como está
+        cantidad = item['cantidad']
+        unidad = item['unidad']
+        total = Decimal(item['total'])  
         total_venta += total
+        
         carrito_con_totales.append({
-            "nombre": producto_clave,
-            "cantidad": datos["cantidad"],
-            "precio_maximo": datos["precio_maximo"],
-            "total": total,
-            "unidad": datos["unidad"]
+            "nombre": item['galleta'],
+            "cantidad": cantidad,
+            "precio_maximo": str(precio),  # Mostrar el precio tal como está
+            "total": str(total),
+            "unidad": unidad
         })
 
-    return render(request, "carrito.html", {"carrito": carrito_con_totales, "total": total_venta})
+    return render(request, "carrito.html", {
+        "carrito": carrito_con_totales, 
+        "total": total_venta
+    })
 
+@transaction.atomic
 def procesar_venta(request):
-    carrito = request.session.get("carrito", {})
+    try:
+        carrito = request.session.get("carrito", [])
 
-    if not carrito:
-        messages.error(request, "El carrito está vacío. Agrega productos antes de proceder.")
-        return redirect("venta")
+        if not carrito:
+            messages.error(request, "El carrito está vacío. Agrega productos antes de proceder.")
+            return redirect("venta")
 
-    venta = Venta.objects.create(
-        fecha_venta=now(),
-        usuario=request.user
-    )
-
-    detalles = []
-    for producto_clave, datos in carrito.items():
-        galleta_nombre, unidad = producto_clave.rsplit(" (", 1)
-        unidad = unidad.rstrip(")")
-
-        try:
-            galleta = Galleta.objects.get(nombre=galleta_nombre)
-        except Galleta.DoesNotExist:
-            messages.error(request, f"La galleta '{galleta_nombre}' no existe.")
-            continue
-
-        cantidad_comprada = datos["cantidad"]
-        if unidad == "KG":
-            piezas_a_descontar = round(cantidad_comprada * (1000 / galleta.peso_individual))
-        elif unidad == "Caja(s) de 12":
-            piezas_a_descontar = cantidad_comprada * 12
-        else:
-            piezas_a_descontar = cantidad_comprada
-
-        precio = datos["precio_maximo"]
-        subtotal = cantidad_comprada * precio
-
-        detalle = DetalleVenta.objects.create(
-            cantidad=cantidad_comprada,
-            precio=precio,
-            subtotal=subtotal,
-            galleta=galleta,
-            venta=venta
+        # Create sale in a transaction
+        venta = Venta.objects.create(
+            fecha_venta=now(),
+            usuario=request.user
         )
-        detalles.append(detalle)
 
-        inventarios = InventarioGalletas.objects.filter(produccion__galleta=galleta, cantidad__gt=0).order_by("fecha_caducidad")
-        faltante = piezas_a_descontar
-        for inventario in inventarios:
-            if faltante <= 0:
-                break
-            if inventario.cantidad >= faltante:
-                inventario.cantidad -= faltante
+        detalles = []
+        for item in carrito:
+            galleta_nombre = item['galleta']
+            cantidad = item['cantidad']
+            precio = Decimal(item['precio'])
+            unidad = item['unidad']
+            inventario_id = item['inventario_id']
+
+            try:
+                galleta = Galleta.objects.get(nombre=galleta_nombre)
+            except Galleta.DoesNotExist:
+                raise ValueError(f"La galleta '{galleta_nombre}' no existe.")
+
+            # Calculate pieces to discount based on unit
+            if unidad == "KG":
+                piezas_a_descontar = round(cantidad * (1000 / galleta.peso_individual))
+            elif unidad == "Caja(s) de 12":
+                piezas_a_descontar = cantidad * 12
+            else:
+                piezas_a_descontar = cantidad
+
+            # Create sale detail
+            detalle = DetalleVenta.objects.create(
+                cantidad=cantidad,
+                precio=precio,
+                subtotal=Decimal(item['total']),
+                galleta=galleta,
+                venta=venta
+            )
+            detalles.append(detalle)
+
+            # Verify and update inventory
+            try:
+                inventario = InventarioGalletas.objects.get(
+                    id=inventario_id,
+                    cantidad__gte=piezas_a_descontar
+                )
+                inventario.cantidad -= piezas_a_descontar
                 if inventario.cantidad == 0:
                     inventario.delete()
                 else:
                     inventario.save()
-                faltante = 0
-            else:
-                faltante -= inventario.cantidad
-                inventario.delete()
+            except InventarioGalletas.DoesNotExist:
+                raise ValueError(f"No hay suficiente inventario para {galleta_nombre}")
 
-    request.session["carrito"] = {}
+        # Limpiar carrito
+        request.session["carrito"] = []
+        
+        # Agregar mensaje de éxito
+        messages.success(request, "Venta realizada con éxito")
+        
+        # Generar y descargar ticket, luego redirigir
+        buffer = generar_ticket(venta, detalles)
+        response = FileResponse(buffer, as_attachment=True, filename=f"ticket_venta_{venta.id}.pdf")
+        return response
 
-    buffer = generar_ticket(venta, detalles)
-    return FileResponse(buffer, as_attachment=True, filename=f"ticket_venta_{venta.id}.pdf")
+    except ValueError as ve:
+        messages.error(request, str(ve))
+        return redirect("ver_carrito")
+    except Exception as e:
+        messages.error(request, f"Error al procesar la venta: {str(e)}")
+        return redirect("ver_carrito")
 
 def eliminar_del_carrito(request, galleta_nombre):
-    carrito = request.session.get("carrito", {})
+    try:
+        with transaction.atomic():
+            carrito = request.session.get("carrito", [])
+            
+            # Find and remove the item from cart
+            for item in carrito[:]:  # Create a copy to iterate
+                if item['galleta'] == galleta_nombre:
+                    # Restore inventory
+                    inventario = InventarioGalletas.objects.get(id=item['inventario_id'])
+                    inventario.cantidad = F('cantidad') + item['cantidad']
+                    inventario.save()
+                    
+                    carrito.remove(item)
+                    messages.success(request, f"{galleta_nombre} fue eliminado del carrito.")
+                    break
+            else:
+                messages.error(request, "El item no existe en el carrito.")
 
-    if galleta_nombre in carrito:
-        del carrito[galleta_nombre]
-        request.session["carrito"] = carrito
-        messages.success(request, f"{galleta_nombre} fue eliminado del carrito.")
-    else:
-        messages.error(request, "El item no existe en el carrito.")
-
+            request.session["carrito"] = carrito
+            
+    except Exception as e:
+        messages.error(request, f"Error al eliminar del carrito: {str(e)}")
+    
     return redirect("ver_carrito")
+
+def cancelar_carrito(request):
+    try:
+        with transaction.atomic():
+            carrito = request.session.get("carrito", [])
+            
+            # Restore inventory for all items
+            for item in carrito:
+                if 'inventario_id' in item:
+                    inventario = InventarioGalletas.objects.get(id=item['inventario_id'])
+                    inventario.cantidad = F('cantidad') + item['cantidad']
+                    inventario.save()
+            
+            # Clear cart
+            request.session["carrito"] = []
+            messages.success(request, "Carrito cancelado correctamente")
+            
+    except Exception as e:
+        messages.error(request, f"Error al cancelar el carrito: {str(e)}")
+    
+    return redirect("venta")
 
 def generar_ticket(venta, detalles):
     buffer = BytesIO()
