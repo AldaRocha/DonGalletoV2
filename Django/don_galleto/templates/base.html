@@ -148,14 +148,14 @@
         {% endif %}
         
         {% if grupo.name == 'Administrador' or 'Cliente' %}
-            <a href="{% url 'venta' %}" class="{% if '/ventas/' in request.path %}active{% endif %}">
+            <a href="{% url 'venta' %}" class="{% if '/ventas/venta' in request.path %}active{% endif %}">
                 <i class="fa-solid fa-cash-register"></i>
                 <span>Ventas</span>
             </a>
         {% endif %}
         
         {% if grupo.name == 'Administrador' or 'Cliente' %}
-            <a href="{% url 'filtrar_historial' %}" class="{% if '/historial/' in request.path %}active{% endif %}">
+            <a href="{% url 'filtrar_historial' %}" class="{% if '/ventas/historial_ventas/' in request.path %}active{% endif %}">
                 <i class="fas fa-history"></i>
                 <span>Historial de Ventas</span>
             </a>
