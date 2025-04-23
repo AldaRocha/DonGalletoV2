@@ -1,62 +1,47 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="pantalla-completa">
-    <div class="menu">
-        <h1 class="text-center">
-            Producciones
-        </h1>
-        </hr>
-        <a class="btn btn-primary" href="{% url "crear_producciones" 0 %}">
-            Producir
+<div class="users-container">
+    <div class="page-header">
+        <h1><i class="fa-solid fa-kitchen-set"></i> Producciones</h1>
+        <a href="{% url 'crear_producciones' 0 %}" class="action-button">
+            <i class="fas fa-plus"></i> Nueva Producción
         </a>
-        <div class="row d-flex mt-4">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="d-flex align-items-center justify-content-center">
-                    <table class="table table-hover table-striped">
-                        <thead>
-                            <th class="text-center">
-                                Galleta
-                            </th>
-                            <th class="text-center">
-                                Fecha de preparaci&oacute;n
-                            </th>
-                            <th class="text-center">
-                                Cantidad
-                            </th>
-                            <th class="text-center">
-                                Acciones
-                            </th>
-                        </thead>
-                        <tbody>
-                            {% for item in lista %}
-                                <tr>
-                                    <td class="text-center">
-                                        {{ item.galleta }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.fecha_preparacion|date }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.cantidad }}
-                                    </td>
-                                    <td class="text-center">
-                                        <a class="btn btn-secondary" href="{% url "editar_producciones" item.id %}">
-                                            Editar Producci&oacute;n
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="d-flex align-items-center justify-content-end">
-            <a class="btn btn-danger" href="{% url "home" %}">
-                Regresar
-            </a>
-        </div>
     </div>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Galleta</th>
+                    <th>Fecha de preparación</th>
+                    <th>Cantidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lista %}
+                    <tr>
+                        <td>{{ item.galleta }}</td>
+                        <td>{{ item.fecha_preparacion|date }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'editar_producciones' item.id %}" class="edit-button" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% comment %} <div class="form-actions">
+        <a href="{% url 'home' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Regresar
+        </a>
+    </div> {% endcomment %}
 </div>
 {% endblock content %}

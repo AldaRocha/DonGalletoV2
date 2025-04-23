@@ -1,90 +1,81 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="pantalla-completa">
-    <div class="menu">
-        <h1 class="text-center">
-            Inventario Galletas
-        </h1>
-        </hr>
-        <div class="row d-flex mt-4">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="d-flex align-items-center justify-content-center">
-                    <table class="table table-hover table-striped">
-                        <thead>
-                            <th class="text-center">
-                                Galleta
-                            </th>
-                            <th class="text-center">
-                                Lote producci&oacute;n
-                            </th>
-                            <th class="text-center">
-                                Vencimiento
-                            </th>
-                            <th class="text-center">
-                                Cantidad existente
-                            </th>
-                            <th class="text-center">
-                                Precio unitario producci&oacute;n
-                            </th>
-                            <th class="text-center">
-                                Acciones
-                            </th>
-                        </thead>
-                        <tbody>
-                            {% for item in lista %}
-                                <tr>
-                                    <td class="text-center">
-                                        {{ item.produccion.galleta }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.produccion.id }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.fecha_caducidad|date }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.cantidad }}
-                                    </td>
-                                    <td class="text-center">
-                                        &dollar;{{ item.precio_por_galleta|floatformat:2 }}
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#mermaModal" data-id="{{ item.id }}">
-                                            Agregar a merma
-                                        </button>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="d-flex align-items-center justify-content-end">
-            <a class="btn btn-danger" href="{% url "home" %}">
-                Regresar
-            </a>
-        </div>
+<div class="users-container">
+    <div class="page-header">
+        <h1><i class="fa-solid fa-cookie-bite"></i> Inventario Galletas</h1>
     </div>
+
+    {% if lista %}
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Galleta</th>
+                    <th>Lote producción</th>
+                    <th>Vencimiento</th>
+                    <th>Cantidad existente</th>
+                    <th>Precio unitario venta</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lista %}
+                    <tr>
+                        <td>{{ item.produccion.galleta }}</td>
+                        <td>{{ item.produccion.id }}</td>
+                        <td>{{ item.fecha_caducidad|date }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>${{ item.precio_por_galleta|floatformat:2 }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="login-button-danger" data-bs-toggle="modal" data-bs-target="#mermaModal" data-id="{{ item.id }}">
+                                    <i class="fas fa-trash"></i> Merma
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fa-solid fa-cookie-bite"></i>
+        </div>
+        <h2 class="empty-state-title">No hay galletas en inventario</h2>
+        <p class="empty-state-description">Actualmente no hay galletas registradas en el inventario.</p>
+    </div>
+    {% endif %}
+
+    {% comment %} <div class="form-actions">
+        <a href="{% url 'home' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Regresar
+        </a>
+    </div> {% endcomment %}
 </div>
 
+<!-- Modal -->
 <div class="modal fade" id="mermaModal" tabindex="-1" aria-labelledby="mermaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="mermaModalLabel">Confirmar envío a merma</h5>
+                <h5 class="modal-title" id="mermaModalLabel">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i>
+                    Confirmar envío a merma
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 ¿Estás seguro de que deseas mandar este lote a merma? Esta acción no se puede deshacer.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="mermaForm" method="POST" style="display: none;">
+                <button type="button" class="action-button" data-bs-dismiss="modal">Cancelar</button>
+                <form id="mermaForm" method="POST">
                     {% csrf_token %}
+                    <button type="submit" class="login-button-danger" id="confirmMerma">Confirmar</button>
                 </form>
-                <button type="button" class="btn btn-danger" id="confirmMerma">Confirmar</button>
             </div>
         </div>
     </div>

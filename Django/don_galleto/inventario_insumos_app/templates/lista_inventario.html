@@ -1,92 +1,65 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="pantalla-completa">
-    <div class="menu">
-        <h1 class="text-center">
-            Inventario Insumos
-        </h1>
-        </hr>
-        <div class="row d-flex mt-4">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="d-flex align-items-center justify-content-center">
-                    <table class="table table-hover table-striped">
-                        <thead>
-                            <tr>
-                                <th class="text-center">
-                                    Insumo
-                                </th>
-                                <th class="text-center">
-                                    Comprado
-                                </th>
-                                <th class="text-center">
-                                    Fecha de caducidad
-                                </th>
-                                <th class="text-center">
-                                    Cantidad Existente
-                                </th>
-                                <th class="text-center">
-                                    Cantidad Mínima
-                                </th>
-                                <th class="text-center">
-                                    Acciones
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in lista %}
-                            <tr>
-                                <td class="text-center">
-                                    {{ item.detalle_compra__insumo__nombre }}
-                                </td>
-                                <td class="text-center">
-                                    {{ item.detalle_compra__compra__fecha_compra|date }}
-                                </td>
-                                <td class="text-center">
-                                    {{ item.detalle_compra__fecha_caducidad|date }}
-                                </td>
-                                <td class="text-center">
-                                    {{ item.cantidad_existente }} {{ item.detalle_compra__insumo__medida__nomenclatura }}
-                                </td>
-                                <td class="text-center">
-                                    {{ item.detalle_compra__insumo__cantidad_minima }} {{ item.detalle_compra__insumo__medida__nomenclatura }}
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#mermaModal" data-id="{{ item.id }}">
-                                        Agregar a merma
-                                    </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="d-flex align-items-center justify-content-end">
-            <a class="btn btn-danger" href="{% url "home" %}">
-                Regresar
-            </a>
-        </div>
+<div class="users-container">
+    <div class="page-header">
+        <h1><i class="fa-solid fa-clipboard-list"></i> Inventario Insumos</h1>
+    </div>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Insumo</th>
+                    <th>Comprado</th>
+                    <th>Fecha de caducidad</th>
+                    <th>Cantidad Existente</th>
+                    <th>Cantidad Mínima</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lista %}
+                <tr>
+                    <td>{{ item.detalle_compra__insumo__nombre }}</td>
+                    <td>{{ item.detalle_compra__compra__fecha_compra|date }}</td>
+                    <td>{{ item.detalle_compra__fecha_caducidad|date }}</td>
+                    <td>{{ item.cantidad_existente }} {{ item.detalle_compra__insumo__medida__nomenclatura }}</td>
+                    <td>{{ item.detalle_compra__insumo__cantidad_minima }} {{ item.detalle_compra__insumo__medida__nomenclatura }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="login-button-danger" data-bs-toggle="modal" data-bs-target="#mermaModal" data-id="{{ item.id }}">
+                                <i class="fas fa-trash"></i> &nbsp; Merma
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
+<!-- Modal con el nuevo estilo -->
 <div class="modal fade" id="mermaModal" tabindex="-1" aria-labelledby="mermaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="mermaModalLabel">Confirmar envío a merma</h5>
+                <h5 class="modal-title" id="mermaModalLabel">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i>
+                    Confirmar envío a merma
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 ¿Estás seguro de que deseas mandar este insumo a merma? Esta acción no se puede deshacer.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="mermaForm" method="POST" style="display: none;">
+                <button type="button" class="action-button" data-bs-dismiss="modal">Cancelar</button>
+                <form id="mermaForm" method="POST" style="display: inline;">
                     {% csrf_token %}
+                    <button type="submit" class="login-button-danger" id="confirmMerma">Confirmar</button>
                 </form>
-                <button type="button" class="btn btn-danger" id="confirmMerma">Confirmar</button>
             </div>
         </div>
     </div>

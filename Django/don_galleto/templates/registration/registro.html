@@ -21,7 +21,7 @@
             <div class="registro-subtitle">
                 Registrate para comenzar a hornear experiencias
             </div>
-            <form method="post">
+            <form method="post" style="padding-top: 30px;">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12 col-12">
@@ -52,20 +52,23 @@
                         <div class="form-group">
                             {{ form.password1.label_tag }}
                             {{ form.password1 }}
+                            <div class="password-requirements">
+                                <small class="req-length">Mínimo 8 caracteres</small>
+                                <small class="req-number">Al menos un número</small>
+                                <small class="req-letter">Al menos una letra</small>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                         <div class="form-group">
                             {{ form.password2.label_tag }}
                             {{ form.password2 }}
+                            <small class="password-match-error" style="display: none;">Las contraseñas no coinciden</small>
                         </div>
                     </div>
                 </div>
-                {% if form.errors %}
-                    <small>Credenciales inválidas. Intente de nuevo.</small>
-                {% endif %}
-                <button type="submit" class="login-button">
-                    Guardar
+                <button type="submit" class="login-button" id="registerButton" disabled>
+                    Registrarse
                 </button>
                 <button class="login-button-danger" onclick="window.location.href='{% url 'login' %}';">
                     Regresar
@@ -76,4 +79,147 @@
     </div>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const password1 = document.getElementById('id_password1');
+        const password2 = document.getElementById('id_password2');
+        const reqLength = document.querySelector('.req-length');
+        const reqNumber = document.querySelector('.req-number');
+        const reqLetter = document.querySelector('.req-letter');
+        const matchError = document.querySelector('.password-match-error');
+        const registerButton = document.getElementById('registerButton');
+
+        const username = document.getElementById('id_username');
+        const email = document.getElementById('id_email');
+        
+        // Agregar mensajes de error para usuario y email
+        const usernameField = username.parentElement;
+        const emailField = email.parentElement;
+        
+        if (!document.querySelector('.username-error')) {
+            const usernameError = document.createElement('small');
+            usernameError.className = 'username-error';
+            usernameError.style.display = 'none';
+            usernameError.style.color = '#dc3545';
+            usernameError.textContent = 'Este nombre de usuario ya está en uso';
+            usernameField.appendChild(usernameError);
+        }
+
+        if (!document.querySelector('.email-error')) {
+            const emailError = document.createElement('small');
+            emailError.className = 'email-error';
+            emailError.style.display = 'none';
+            emailError.style.color = '#dc3545';
+            emailError.textContent = 'Este email ya está registrado';
+            emailField.appendChild(emailError);
+        }
+
+        async function checkAvailability(field, value) {
+            try {
+                const response = await fetch(`/check-availability/?field=${field}&value=${value}`);
+                const data = await response.json();
+                
+                const errorElement = document.querySelector(`.${field}-error`);
+                const inputElement = document.getElementById(`id_${field}`);
+                
+                if (data.exists) {
+                    errorElement.style.display = 'block';
+                    inputElement.classList.add('invalid');
+                    return false;
+                } else {
+                    errorElement.style.display = 'none';
+                    inputElement.classList.remove('invalid');
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error checking availability:', error);
+                return true; // En caso de error, permitimos continuar
+            }
+        }
+
+        let usernameTimeout;
+        let emailTimeout;
+
+        username.addEventListener('input', function() {
+            clearTimeout(usernameTimeout);
+            usernameTimeout = setTimeout(async () => {
+                if (username.value.length > 2) {
+                    const isAvailable = await checkAvailability('username', username.value);
+                    validateForm();
+                }
+            }, 500);
+        });
+
+        email.addEventListener('input', function() {
+            clearTimeout(emailTimeout);
+            emailTimeout = setTimeout(async () => {
+                if (email.value.includes('@')) {
+                    const isAvailable = await checkAvailability('email', email.value);
+                    validateForm();
+                }
+            }, 500);
+        });
+
+        async function validateForm() {
+            const value = password1.value;
+            const isLengthValid = value.length >= 8;
+            const isNumberValid = /\d/.test(value);
+            const isLetterValid = /[a-zA-Z]/.test(value);
+            const isMatchValid = password2.value && password1.value === password2.value;
+            
+            // Validar disponibilidad de usuario y email
+            const isUsernameValid = !document.querySelector('.username-error').style.display || 
+                                   document.querySelector('.username-error').style.display === 'none';
+            const isEmailValid = !document.querySelector('.email-error').style.display || 
+                                document.querySelector('.email-error').style.display === 'none';
+
+            // Habilitar el botón solo si todas las validaciones pasan
+            registerButton.disabled = !(isLengthValid && isNumberValid && isLetterValid && 
+                                      isMatchValid && isUsernameValid && isEmailValid);
+        }
+    
+        function validatePassword() {
+            const value = password1.value;
+            
+            // Validar longitud
+            if(value.length >= 8) {
+                reqLength.classList.add('valid');
+            } else {
+                reqLength.classList.remove('valid');
+            }
+    
+            // Validar número
+            if(/\d/.test(value)) {
+                reqNumber.classList.add('valid');
+            } else {
+                reqNumber.classList.remove('valid');
+            }
+    
+            // Validar letra
+            if(/[a-zA-Z]/.test(value)) {
+                reqLetter.classList.add('valid');
+            } else {
+                reqLetter.classList.remove('valid');
+            }
+
+            validateForm();
+        }
+    
+        function checkPasswordMatch() {
+            if(password2.value && password1.value !== password2.value) {
+                matchError.style.display = 'block';
+                password2.classList.add('invalid');
+            } else {
+                matchError.style.display = 'none';
+                password2.classList.remove('invalid');
+            }
+            validateForm();
+        }
+    
+        password1.addEventListener('input', validatePassword);
+        password2.addEventListener('input', checkPasswordMatch);
+    });
+</script>
+
 </html>
