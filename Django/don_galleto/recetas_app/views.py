@@ -11,16 +11,16 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 class ListaRecetasView(PermissionRequiredMixin, TemplateView):
     permission_required = ["recetas_app.view_Receta"]
     login_url = "login"
+
     def handle_no_permission(self):
         return redirect("venta")
+
     template_name = "lista_recetas.html"
-    def get_context_data(self):
-        lista = Receta.objects.all()
-        for receta in lista:
-            receta.para_produccion = "Si" if receta.para_produccion else "No"
-        return {
-            "lista": lista
-        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["lista"] = Receta.objects.all()
+        return context
 
 class CrearRecetasView(PermissionRequiredMixin, FormView):
     permission_required = ["recetas_app.add_Receta"]
@@ -61,19 +61,23 @@ class EditarRecetasView(PermissionRequiredMixin, FormView):
             return self.form_invalid(form)
 
 class ListaDetalleRecetaView(PermissionRequiredMixin, TemplateView):
-    permission_required = ["recetas_app.view_DetalleReceta"]
-    login_url = "login"
-    def handle_no_permission(self):
-        return redirect("venta")
-    template_name = "lista_detallereceta.html"
-    def get_context_data(self, **kwargs):
-        id = kwargs.get("id")
-        lista = DetalleReceta.objects.filter(receta_id=id)
-        return {
-            "lista": lista,
-            "id": id
-        }
+    template_name = 'lista_detallereceta.html'
+    permission_required = 'recetas_app.view_detallereceta'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        id = kwargs.get("id")
+        receta = Receta.objects.get(id=id)
+        detalles = DetalleReceta.objects.filter(receta_id=id)
+
+        context.update({
+            "lista": detalles,
+            "id": id,
+            "costo_total_insumos": receta.costo_total_insumos,
+            "costo_por_galleta": receta.costo_por_galleta
+        })
+        return context
+        
 class CrearDetalleRecetaView(PermissionRequiredMixin, FormView):
     permission_required = ["recetas_app.add_DetalleReceta"]
     login_url = "login"

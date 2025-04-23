@@ -3,6 +3,7 @@ from galletas_app.models import Galleta
 from galletas_app import models
 from medidas_app.models import Medida
 from producciones_app.models import SolicitudProduccion
+from decimal import Decimal, ROUND_HALF_UP
 
 class GalletaRegistrarForm(forms.ModelForm):
     medida = forms.ModelChoiceField(
@@ -41,26 +42,42 @@ class GalletaEditarForm(forms.ModelForm):
         empty_label="Seleccione una medida",
         widget=forms.Select(attrs={"class": "form-control"})
     )
+    
     class Meta:
         model = Galleta
-        fields = ["nombre", "descripcion", "peso_individual", "precio_produccion", "precio_venta", "imagen", "medida"]
+        fields = ['nombre', 'descripcion', 'peso_individual', 'precio_produccion', 'precio_venta', 'medida', 'imagen']
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
             "descripcion": forms.TextInput(attrs={"class": "form-control"}),
             "peso_individual": forms.NumberInput(attrs={"class": "form-control"}),
-            "precio_produccion": forms.NumberInput(attrs={"class": "form-control"}),
-            "precio_venta": forms.NumberInput(attrs={"class": "form-control"}),
+            "precio_venta": forms.NumberInput(attrs={"class": "form-control", "step": "0.01"}),
             "imagen": forms.FileInput(attrs={"class": "form-control"})
         }
-    def save(self, id):
-        item = models.Galleta.objects.filter(id=id).first()
-        item.nombre = self.cleaned_data["nombre"]
-        item.descripcion = self.cleaned_data["descripcion"]
-        item.peso_individual = self.cleaned_data["peso_individual"]
-        item.precio_produccion = self.cleaned_data["precio_produccion"]
-        item.precio_venta = self.cleaned_data["precio_venta"]
-        if self.cleaned_data.get("imagen"):
-            item.imagen = self.cleaned_data["imagen"]
-        item.medida = self.cleaned_data["medida"]
-        item.save()
-        return item
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        if instance:
+            precio = instance.precio_produccion_actual
+            precio_redondeado = Decimal(str(precio)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            self.initial['precio_produccion'] = precio_redondeado
+
+        self.fields['precio_produccion'].widget = forms.NumberInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+            'step': '0.01',
+            'min': '0',
+            'max': '99999.99'
+        })
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        if self.cleaned_data.get('imagen') is None:
+            # Mantener la imagen existente si no se proporciona una nueva
+            instance.imagen = instance.imagen
+            
+        if commit:
+            instance.save()
+            
+        return instance

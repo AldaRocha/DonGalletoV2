@@ -1,86 +1,88 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <div class="container-fluid">
-        <div class="row align-items-center mb-3">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-6 d-flex justify-content-start">
-                <h1 class="text-left">
-                    Galletas
-                </h1>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-6 d-flex justify-content-end">
-                <div class="btn-group" role="group" aria-label="Unidad de medida">
-                    <a href="?unidad=pz" class="btn btn-outline-primary {% if unidad_actual == 'pz' %}active{% endif %}">
-                        Piezas
-                    </a>
-                    <a href="?unidad=kg" class="btn btn-outline-primary {% if unidad_actual == 'kg' %}active{% endif %}">
-                        Kilogramos
-                    </a>
-                    <a href="?unidad=caja" class="btn btn-outline-primary {% if unidad_actual == 'caja' %}active{% endif %}">
-                        Caja (12)
-                    </a>
-                </div>
-                <a href="{% url 'ver_carrito' %}" class="btn btn-success ms-2">
-                    Ver carrito
+<div class="users-container">
+    <div class="page-header">
+        <h1><i class="fa-solid fa-store"></i> Venta de Galletas</h1>
+        <div class="header-actions">
+            <div class="unit-selector">
+                <a href="?unidad=pz" class="unit-button {% if unidad_actual == 'pz' %}active{% endif %}">
+                    Piezas
+                </a>
+                <a href="?unidad=kg" class="unit-button {% if unidad_actual == 'kg' %}active{% endif %}">
+                    Kilogramos
+                </a>
+                <a href="?unidad=caja" class="unit-button {% if unidad_actual == 'caja' %}active{% endif %}">
+                    Caja (12)
                 </a>
             </div>
-        </div>
-        {% if messages %}
-            <div class="alert-container">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <div class="row">
-            {% for item in lista %}
-                <div class="d-flex col-lg-4 col-md-4 col-sm-4 col-4 justify-content-center align-items-center mt-2">
-                    <div class="card">
-                        {% if item.produccion__galleta__imagen is not None %}
-                            <img class="card-img-top" src="\media\{{ item.produccion__galleta__imagen }}" alt="Imagen de la galleta">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title text-center">
-                                <strong>
-                                    {{ item.produccion__galleta__nombre }}
-                                </strong>
-                            </h5>
-                            <p class="card-text text-center">
-                                <strong>
-                                    {{ item.produccion__galleta__descripcion }}
-                                </strong>
-                            </p>
-                            <p class="card-text text-center">
-                                <strong>
-                                    Disponibles: {{ item.existencia }} {{ item.unidad }}
-                                </strong>
-                            </p>
-                            <p class="card-text text-center">
-                                <strong>
-                                    &dollar;{{ item.precio_maximo|floatformat:2 }}
-                                </strong>
-                            </p>
-                            <form method="POST" action="{% url 'agregar_al_carrito' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="galleta_nombre" value="{{ item.produccion__galleta__nombre }}">
-                                <input type="hidden" name="precio_maximo" value="{{ item.precio_maximo }}">
-                                <input type="hidden" name="unidad" value="{{ item.unidad }}">
-                                <div class="form-group">
-                                    <label for="cantidad">
-                                        Cantidad:
-                                    </label>
-                                    <input type="number" name="cantidad" min="1" max="{{ item.existencia }}" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">
-                                    Agregar al carrito
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+            <a href="{% url 'ver_carrito' %}" class="action-button-cart">
+                <i class="fas fa-shopping-cart"></i> Ver carrito
+            </a>
         </div>
     </div>
+
+    {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if lista %}
+        <div class="galletas-grid">
+            {% for item in lista %}
+            <div class="galleta-card venta-card">
+                <div class="galleta-imagen">
+                    {% if item.produccion__galleta__imagen %}
+                        <img src="/media/{{ item.produccion__galleta__imagen }}" alt="{{ item.produccion__galleta__nombre }}">
+                    {% else %}
+                        <div class="no-imagen">
+                            <i class="fa-solid fa-cookie"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="galleta-info">
+                    <h3>{{ item.produccion__galleta__nombre }}</h3>
+                    <p class="descripcion">{{ item.produccion__galleta__descripcion }}</p>
+                    <div class="venta-details">
+                        <p class="existencia">
+                            <i class="fas fa-box"></i>
+                            Disponibles: {{ item.existencia }} {{ item.unidad }}
+                        </p>
+                        <p class="precio">
+                            <i class="fas fa-tag"></i>
+                            ${{ item.precio_maximo|floatformat:2 }}
+                        </p>
+                    </div>
+                    <form method="POST" action="{% url 'agregar_al_carrito' %}" class="venta-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="galleta_nombre" value="{{ item.produccion__galleta__nombre }}">
+                        <input type="hidden" name="precio_maximo" value="{{ item.precio_para_carrito }}">
+                        <input type="hidden" name="unidad" value="{{ item.unidad }}">
+                        <div class="cantidad-group">
+                            <label for="cantidad">Cantidad:</label>
+                            <input type="number" name="cantidad" min="1" max="{{ item.existencia }}" required>
+                        </div>
+                        <button type="submit" class="action-button-cart" style="font-size: 1rem;">
+                            <i class="fas fa-cart-plus"></i> Agregar al carrito
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fa-solid fa-cookie-bite"></i>
+            </div>
+            <h2 class="empty-state-title">No hay galletas disponibles</h2>
+            <p class="empty-state-description">En este momento no hay galletas disponibles para venta.</p>
+        </div>
+    {% endif %}
+</div>
 {% endblock content %}

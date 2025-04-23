@@ -61,127 +61,106 @@
     Cliente
     <div class="sidebar {% if is_sidebar_collapsed %}collapsed{% endif %}" id="sidebar">
         {% for grupo in request.user.groups.all %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-                    <i class="fa-solid fa-dashboard"></i>
-                    <span>
-                        Dashboard
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_usuarios' %}" class="{% if '/usuarios/' in request.path %}active{% endif %}">
-                    <i class="fas fa-users"></i>
-                    <span>
-                        Usuarios
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_proveedores' %}" class="{% if request.resolver_match.url_name == 'lista_proveedores' %}active{% endif %}">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                    <span>
-                        Proveedores
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_medidas' %}" class="{% if request.resolver_match.url_name == 'lista_medidas' %}active{% endif %}">
-                    <i class="fa-solid fa-ruler-horizontal"></i>
-                    <span>
-                        Medidas
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_insumos' %}" class="{% if request.resolver_match.url_name == 'lista_insumos' %}active{% endif %}">
-                    <i class="fa-solid fa-egg"></i>
-                    <span>
-                        Insumos
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_compras' %}" class="{% if request.resolver_match.url_name == 'lista_compras' %}active{% endif %}">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span>
-                        Compras
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_inventario' %}" class="{% if request.resolver_match.url_name == 'lista_inventario' %}active{% endif %}">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>
-                        Inventario Insumos
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_galletas' %}" class="{% if request.resolver_match.url_name == 'lista_galletas' %}active{% endif %}">
-                    <i class="fa-solid fa-cookie"></i>
-                    <span>
-                        Galletas
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_recetas' %}" class="{% if request.resolver_match.url_name == 'lista_recetas' %}active{% endif %}">
-                    <i class="fa-solid fa-book"></i>
-                    <span>
-                        Recetas
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_solicitarproducciones' %}" class="{% if request.resolver_match.url_name == 'lista_solicitarproducciones' %}active{% endif %}">
-                    <i class="fa-solid fa-kitchen-set"></i>
-                    <span>
-                        Solicitud Producción
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_producciones' %}" class="{% if request.resolver_match.url_name == 'lista_producciones' %}active{% endif %}">
-                    <i class="fa-solid fa-kitchen-set"></i>
-                    <span>
-                        Producción
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_mermas' %}" class="{% if request.resolver_match.url_name == 'lista_mermas' %}active{% endif %}">
-                    <i class="fa-solid fa-trash"></i>
-                    <span>
-                        Merma
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' %}
-                <a href="{% url 'lista_inventariogalletas' %}" class="{% if request.resolver_match.url_name == 'lista_inventariogalletas' %}active{% endif %}">
-                    <i class="fa-solid fa-cookie"></i>
-                    <span>
-                        Inventario Galletas
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' or 'Cliente' %}
-                <a href="{% url 'venta' %}" class="{% if request.resolver_match.url_name == '#' %}active{% endif %}">
-                    <i class="fa-solid fa-cash-register"></i>
-                    <span>
-                        Ventas
-                    </span>
-                </a>
-            {% endif %}
-            {% if grupo.name == 'Administrador' or 'Cliente' %}
-                <a href="{% url 'filtrar_historial' %}" class="{% if request.resolver_match.url_name == '#' %}active{% endif %}">
-                    <i class="fa-solid fa-cash-register"></i>
-                    <span>
-                        Historial
-                    </span>
-                </a>
-            {% endif %}
-        {% endfor %}
+        {% if grupo.name == 'Administrador' %}
+        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <i class="fa-solid fa-dashboard"></i>
+            <span>
+                Dashboard
+            </span>
+        </a>
+    {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_usuarios' %}" class="{% if '/usuarios/' in request.path %}active{% endif %}">
+                <i class="fas fa-users"></i>
+                <span>Usuarios</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_proveedores' %}" class="{% if '/proveedores/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span>Proveedores</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_insumos' %}" class="{% if '/insumos/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-egg"></i>
+                <span>Insumos</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_compras' %}" class="{% if '/compras/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>Compras</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_inventario' %}" class="{% if '/inventario_insumos/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>Inventario Insumos</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_galletas' %}" class="{% if '/galletas/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-cookie"></i>
+                <span>Galletas</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_recetas' %}" class="{% if '/recetas/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-book"></i>
+                <span>Recetas</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_solicitarproducciones' %}" class="{% if request.resolver_match.url_name == 'lista_solicitarproducciones' %}active{% endif %}">
+                <i class="fa-solid fa-clock"></i>
+                <span>Solicitud Producción</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_producciones' %}" class="{% if request.resolver_match.url_name == 'lista_producciones' %}active{% endif %}">
+                <i class="fa-solid fa-kitchen-set"></i>
+                <span>Producción</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_mermas' %}" class="{% if '/mermas/' in request.path %}active{% endif %}">
+                <i class="fas fa-trash-alt"></i>
+                <span>Merma</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' %}
+            <a href="{% url 'lista_inventariogalletas' %}" class="{% if '/inventario_galletas/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-cookie"></i>
+                <span>Inventario Galletas</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' or 'Cliente' %}
+            <a href="{% url 'venta' %}" class="{% if '/ventas/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-cash-register"></i>
+                <span>Ventas</span>
+            </a>
+        {% endif %}
+        
+        {% if grupo.name == 'Administrador' or 'Cliente' %}
+            <a href="{% url 'filtrar_historial' %}" class="{% if '/historial/' in request.path %}active{% endif %}">
+                <i class="fas fa-history"></i>
+                <span>Historial de Ventas</span>
+            </a>
+        {% endif %}
+    {% endfor %}
     </div>
 
     <div class="content">
@@ -191,8 +170,29 @@
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script>
-        document.getElementById('menuToggle').addEventListener('click', function () {
-            document.getElementById('sidebar').classList.toggle('active');
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const content = document.querySelector('.content');
+            
+            // Función para manejar el estado del menú
+            function toggleMenu() {
+                sidebar.classList.toggle('collapsed');
+                content.classList.toggle('expanded');
+                
+                // Guardar el estado en localStorage
+                const isCollapsed = sidebar.classList.contains('collapsed');
+                localStorage.setItem('sidebarCollapsed', isCollapsed);
+            }
+            
+            // Restaurar el estado del menú al cargar la página
+            const savedState = localStorage.getItem('sidebarCollapsed');
+            if (savedState === 'true') {
+                sidebar.classList.add('collapsed');
+                content.classList.add('expanded');
+            }
+            
+            menuToggle.addEventListener('click', toggleMenu);
         });
     </script>
 </body>

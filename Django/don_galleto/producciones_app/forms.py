@@ -24,20 +24,28 @@ class ProduccionRegistrarForm(forms.ModelForm):
         required=True,
         widget=forms.NumberInput(attrs={"class": "form-control"})
     )
+    cantidad = forms.IntegerField(
+        initial=30,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "readonly": True,
+                "value": 30
+            }
+        )
+    )
+
     class Meta:
         model = Produccion
         fields = ["cantidad", "galleta"]
-        widgets = {
-            "cantidad": forms.NumberInput(attrs={"class": "form-control"})
-        }
+
     def __init__(self, *args, **kwargs):
         galleta_id = kwargs.pop('galleta_id', None)
         super().__init__(*args, **kwargs)
-        if galleta_id and int(galleta_id) > 0:
-            self.fields["galleta"].queryset = Galleta.objects.filter(id=galleta_id)
-            self.fields["galleta"].initial = Galleta.objects.get(id=galleta_id)
-        else:
-            self.fields["galleta"].queryset = Galleta.objects.all()
+        # Set fixed quantity
+        self.initial['cantidad'] = 30
+        self.fields['cantidad'].widget.attrs['readonly'] = True
+        
     def save(self, commit=True):
         try:
             with transaction.atomic():
@@ -117,6 +125,12 @@ class ProduccionRegistrarForm(forms.ModelForm):
                 return instance
         except Exception as ex:
             raise ValidationError(f"Error: {ex}")
+    
+    def clean_cantidad(self):
+        cantidad = self.cleaned_data.get('cantidad')
+        if cantidad != 30:
+            raise ValidationError("La cantidad debe ser exactamente 30 galletas por lote")
+        return cantidad
 
 class ProduccionEditarForm(forms.ModelForm):
     merma = forms.IntegerField(
